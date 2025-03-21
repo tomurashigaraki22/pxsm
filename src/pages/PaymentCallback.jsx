@@ -23,7 +23,7 @@ export default function PaymentCallback() {
     try {
         console.log("UU: ", user)
         console.log("U: ", user.id, amount, 'credit')
-      const response = await fetch(`/api/balance/update`, {
+      const response = await fetch(`${API_URL}/balance/update`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

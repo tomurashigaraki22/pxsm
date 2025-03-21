@@ -57,7 +57,7 @@ export default function WalletFunding({ onFund, onClose }) {
     }
 
     try {
-        const response = await fetch(`https://api-d.squadco.com/transaction/initiate`, {
+        const response = await fetch(`https:/${API_URL}-d.squadco.com/transaction/initiate`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
