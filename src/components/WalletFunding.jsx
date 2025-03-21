@@ -71,7 +71,7 @@ export default function WalletFunding({ onFund, onClose }) {
                 customer_name: user.username,
                 initiate_type: "inline",
                 transaction_ref: `wallet_funding_${Date.now()}`,
-                callback_url: `${window.location.origin}/payment-callback?transactionRef=wallet_funding_${Date.now()}&amount=${Number(amount)}`,
+                callback_url: `${window.location.origin}/#/payment-callback?transactionRef=wallet_funding_${Date.now()}&amount=${Number(amount)}`,
                 payment_channels: ["card", "bank", "ussd", "transfer"],
                 pass_charge: true
             })
