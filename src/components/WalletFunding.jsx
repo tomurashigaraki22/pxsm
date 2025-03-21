@@ -2,6 +2,7 @@ import { useAuth } from "../contexts/AuthContext";
 import React, { useState, useEffect } from "react";
 import CreateSquadClient from "@squadco/js";
 import { motion } from "framer-motion";
+import { API_URL } from "../config";
 
 export default function WalletFunding({ onFund, onClose }) {
   const [amount, setAmount] = useState("");
@@ -57,7 +58,7 @@ export default function WalletFunding({ onFund, onClose }) {
     }
 
     try {
-        const response = await fetch(`https:/${API_URL}-d.squadco.com/transaction/initiate`, {
+        const response = await fetch(`https://api-d.squadco.com/transaction/initiate`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
