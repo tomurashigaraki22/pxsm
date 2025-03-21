@@ -77,7 +77,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await fetch(`${API_URL}/transactions/${user.id}`);
+        const response = await fetch(`/api/transactions/${user.id}`);
         console.log("reS: ", response)
         const data = await response.json();
         console.log("Tx Data: ", data)
@@ -107,7 +107,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchBalance = async () => {
       try {
-        const response = await fetch(`${API_URL}/balance/get/${user.id}`);
+        const response = await fetch(`/api/balance/get/${user.id}`);
         const data = await response.json();
         if (response.ok) {
           setWalletBalance(data.balance);
@@ -129,7 +129,7 @@ export default function Dashboard() {
   
   const handlePaymentSuccess = async (amount) => {
     try {
-      const response = await fetch(`${API_URL}/balance/update`, {
+      const response = await fetch(`/api/balance/update`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -145,7 +145,7 @@ export default function Dashboard() {
       
       if (response.ok) {
         // Fetch updated balance
-        const balanceResponse = await fetch(`${API_URL}/balance/get/${user.id}`);
+        const balanceResponse = await fetch(`/api/balance/get/${user.id}`);
         const balanceData = await balanceResponse.json();
         
         if (balanceResponse.ok) {
