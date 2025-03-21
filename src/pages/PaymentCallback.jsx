@@ -19,43 +19,33 @@ export default function PaymentCallback() {
     "development" // Environment (change to 'production' when live)
   );
 
-  const handlePaymentSuccess = async () => {
-    try {
-        console.log("UU: ", user)
-        console.log("U: ", user.id, amount, 'credit')
-      const response = await fetch(`${API_URL}/balance/update`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          user_id: user.id,
-          amount: amount,
-          type: 'credit'
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to update balance');
-      }
-      const data = await response.json();
-      console.log('Balance updated:', data);
-    } catch (error) {
-      console.error('Failed to update balance:', error);
-    }
-  };
-  
-
   useEffect(() => {
     const verifyPayment = async () => {
       try {
-        const response = await squad.verifyTransaction(transactionRef);
-        console.log('Verification response:', response.data.transaction_status);
-        
-        if (response.data.transaction_status === 'success') {
-          setStatus('success');
-          handlePaymentSuccess(amount);
-          setTimeout(() => navigate('/dashboard'), 5000);
+        const response = await fetch(`https://api-d.squadco.com/transaction/verify/${transactionRef}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer sk_7bfd64c7c64b3050602b8ed94ad155ec0ac70607`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const data = await response.json();
+        console.log('Verification response:', data);
+
+        if (data.status === 200) {
+          if (data.data.transaction_status.toLowerCase() === 'success') {
+            setStatus('success');
+            await handlePaymentSuccess();
+            setTimeout(() => navigate('/dashboard'), 5000);
+          } else if (data.data.transaction_status.toLowerCase() === 'pending') {
+            setStatus('verifying');
+            // Retry verification after 5 seconds
+            setTimeout(verifyPayment, 5000);
+          } else {
+            setStatus('failed');
+            setTimeout(() => navigate('/dashboard'), 5000);
+          }
         } else {
           setStatus('failed');
           setTimeout(() => navigate('/dashboard'), 5000);
@@ -70,7 +60,35 @@ export default function PaymentCallback() {
     if (transactionRef) {
       verifyPayment();
     }
-  }, [transactionRef, navigate]);
+  }, [transactionRef, navigate, amount, squad.privateKey]);
+
+  const handlePaymentSuccess = async () => {
+    try {
+      const response = await fetch(`${API_URL}/balance/update`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: user.id,
+          amount: amount,
+          type: 'credit',
+          transaction_ref: transactionRef
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update balance');
+      }
+      const data = await response.json();
+      console.log('Balance updated:', data);
+    } catch (error) {
+      console.error('Failed to update balance:', error);
+      // Even if balance update fails, we'll show success since payment was successful
+      // But we'll log the error for backend investigation
+    }
+  };
+  
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
