@@ -11,7 +11,7 @@ import PaymentCallback from './pages/PaymentCallback';
 function App() {
   return (
     <AuthProvider>
-      <Router>
+      <Router basename='/'>
         <Routes>
           {/* Public routes */}
           <Route path="/" element={
