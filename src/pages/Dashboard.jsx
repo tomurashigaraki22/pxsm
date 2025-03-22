@@ -55,7 +55,7 @@ export default function Dashboard() {
       formdata.append("key", "yUNY9SCYVkQZIpN1qfge")
       formdata.append("action", "services")
       try {
-        const response = await fetch('https://boostsmm.ng${API_URL}/v1', {
+        const response = await fetch(`https://boostsmm.ng/api/v1`, {
           method: 'POST',
           body: formdata
         });
