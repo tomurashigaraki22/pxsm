@@ -100,6 +100,7 @@ useEffect(() => {
           }
         });
         const data = await response.json();
+        console.log("SERVICES: ", data)
         setServices(data);
       } catch (error) {
         console.error('Failed to fetch services:', error);
@@ -237,7 +238,7 @@ useEffect(() => {
       console.log("Order tried to place")
       console.log("Service that was placed: ", service)
 
-      if (parseFloat(walletBalance) < ((orderQuantity * (rate / selectedService.min)).toFixed(2))){
+      if (parseFloat(walletBalance) < ((orderQuantity * (rate / 1000)).toFixed(2))){
         alert("Insufficient funds")
         return
       }
@@ -262,7 +263,7 @@ useEffect(() => {
           console.log(`An error occured: ${m.error}`)
           if (m.error === "insufficient_funds"){
             alert(`Insufficient funds on API, Contact Website Admin`)
-            console.log("AMOUNT: ", ((orderQuantity * (rate / selectedService.min)).toFixed(2)))
+            console.log("AMOUNT: ", ((orderQuantity * (rate / 1000)).toFixed(2)))
             console.log("")
             const response = await fetch(`${API_URL}/orders/create`, {
               method: 'POST',
@@ -274,7 +275,7 @@ useEffect(() => {
                 order_id: `new_order_${Date.now()}`,
                 service_name: selectedService.name,
                 link: orderLink,
-                amount: (orderQuantity * (rate / selectedService.min)).toFixed(2),
+                amount: (orderQuantity * (rate / 1000)).toFixed(2),
                 status: 'cancelled'
               })
             })
@@ -304,7 +305,7 @@ useEffect(() => {
             order_id: `new_order_${Date.now()}`,
             service_name: selectedService.name,
             link: orderLink,
-            amount: (orderQuantity * (rate / selectedService.min)).toFixed(2),
+            amount: (orderQuantity * (rate / 1000)).toFixed(2),
             status: 'cancelled'
           })
         })
@@ -349,7 +350,7 @@ useEffect(() => {
             order_id: `new_order_${Date.now()}`,
             service_name: selectedService.name,
             link: orderLink,
-            amount: (orderQuantity * (rate / selectedService.min)).toFixed(2),
+            amount: (orderQuantity * (rate / 1000)).toFixed(2),
             status: 'pending'
           })
         })
@@ -371,7 +372,7 @@ useEffect(() => {
             order_id: `new_order_${Date.now()}`,
             service_name: selectedService.name,
             link: orderLink,
-            amount: (orderQuantity * (rate / selectedService.min)).toFixed(2),
+            amount: (orderQuantity * (rate / 1000)).toFixed(2),
             status: 'completing'
           })
         })
@@ -393,7 +394,7 @@ useEffect(() => {
             order_id: `new_order_${Date.now()}`,
             service_name: selectedService.name,
             link: orderLink,
-            amount: (orderQuantity * (rate / selectedService.min)).toFixed(2),
+            amount: (orderQuantity * (rate / 1000)).toFixed(2),
             status: 'completed'
           })
         })
@@ -415,7 +416,7 @@ useEffect(() => {
             order_id: `new_order_${Date.now()}`,
             service_name: selectedService.name,
             link: orderLink,
-            amount: (orderQuantity * (rate / selectedService.min)).toFixed(2),
+            amount: (orderQuantity * (rate / 1000)).toFixed(2),
             status: 'completing'
           })
         })
@@ -437,7 +438,7 @@ useEffect(() => {
             order_id: `new_order_${Date.now()}`,
             service_name: selectedService.name,
             link: orderLink,
-            amount: (orderQuantity * (rate / selectedService.min)).toFixed(2),
+            amount: (orderQuantity * (rate / 1000)).toFixed(2),
             status: 'cancelled'
           })
         })
@@ -463,7 +464,7 @@ useEffect(() => {
           order_id: `new_order_${Date.now()}`,
           service_name: selectedService.name,
           link: orderLink,
-          amount: (orderQuantity * (rate / selectedService.min)).toFixed(2),
+          amount: (orderQuantity * (rate / 1000)).toFixed(2),
           status: 'cancelled'
         })
       })
@@ -819,12 +820,12 @@ useEffect(() => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
                 <input
                   type="number"
-                  min={selectedService.min}
+                  min={1000}
                   max={selectedService.max}
                   value={orderQuantity}
                   onChange={(e) => setOrderQuantity(e.target.value)}
                   className="w-full border border-gray-300 rounded-md p-2 focus:ring-pink-500 focus:border-pink-500"
-                  placeholder={`Min: ${selectedService.min} - Max: ${selectedService.max}`}
+                  placeholder={`Min: ${1000} - Max: ${selectedService.max}`}
                 />
               </div>
   
@@ -849,11 +850,11 @@ useEffect(() => {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Rate:</span>
-                    <span>₦{rate} per {selectedService.min}</span>
+                    <span>₦{rate} per 1000</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Total Cost:</span>
-                    <span>₦{(orderQuantity * (rate / selectedService.min)).toLocaleString(undefined, {minimumFractionDigits:2,maximumFractionDigits:2})}</span>
+                    <span>₦{(orderQuantity * (rate / 1000)).toLocaleString(undefined, {minimumFractionDigits:2,maximumFractionDigits:2})}</span>
                   </div>
                 </div>
               </div>
