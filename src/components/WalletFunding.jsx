@@ -1,18 +1,16 @@
 import { useAuth } from "../contexts/AuthContext";
-import React, { useState, useEffect } from "react";
-import CreateSquadClient from "@squadco/js";
+import React, { useState } from "react";
+import { PaystackButton } from "react-paystack";
 import { motion } from "framer-motion";
 import { API_URL } from "../config";
+import { useNavigate } from "react-router-dom";
 
 export default function WalletFunding({ onFund, onClose }) {
   const [amount, setAmount] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false);
-  const [paymentStatus, setPaymentStatus] = useState(null); // New state for payment status
-  const [paymentError, setPaymentError] = useState(null); // New state for payment error
-  const [paymentResponse, setPaymentResponse] = useState(null); // New state for payment response
   const { user } = useAuth();
-
 
   const handleChange = (e) => {
     const value = e.target.value;
@@ -22,79 +20,47 @@ export default function WalletFunding({ onFund, onClose }) {
     }
   };
 
-  useEffect(() => {
-    const handlePaymentCallback = async (event) => {
-      console.log("Payment callback received:", event);
-      try{
-        if (event.data && event.data.type === "squad.payment_successful") {
-          setPaymentStatus("success");
-          setPaymentResponse(event.data);
-          // Call the onFund callback with the payment response
-          onFund(Number(amount));
-        } else if (event.data && event.data.type === "squad.payment_failed") {
-          setPaymentStatus("failed");
-          setPaymentError(event.data);
-          // Handle payment failure, e.g., show an error message to the user
+  const config = {
+    reference: `wallet_funding_${Date.now()}`,
+    email: user.email,
+    amount: Number(amount) * 100, // Paystack amount is in kobo
+    publicKey: 'pk_test_aa75f665e51af7dd84de924db2bf1c5c1b3bac48',
+    metadata: {
+      custom_fields: [
+        {
+          display_name: "Customer Name",
+          variable_name: "customer_name",
+          value: user.username
         }
-      } catch(error){
-        console.log("Error: ", error)
-        setPaymentError("payment successful but failed to update wallet")
-      }
+      ]
     }
+  };
 
-    window.addEventListener("message", handlePaymentCallback);
-    return () => {
-      window.removeEventListener("message", handlePaymentCallback);
-    };
-  }, [amount, onFund, onClose])
-
-  const handlePayment = async () => {
-    setIsLoading(true);
-    
-    if (!amount || amount < 100) {
-        setError("Minimum funding amount is ₦100");
-        setIsLoading(false); // Ensure loading stops
-        return;
-    }
-
+  const onSuccess = async (reference) => {
     try {
-        const response = await fetch(`https://api-d.squadco.com/transaction/initiate`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer sk_7bfd64c7c64b3050602b8ed94ad155ec0ac70607`,
-            },
-            body: JSON.stringify({
-                email: user.email,
-                currency: "NGN",
-                amount: Number(amount) * 100,
-                customer_name: user.username,
-                initiate_type: "inline",
-                transaction_ref: `wallet_funding_${Date.now()}`,
-                callback_url: `${window.location.origin}/#/payment-callback?transactionRef=wallet_funding_${Date.now()}&amount=${Number(amount)}`,
-                payment_channels: ["card", "bank", "ussd", "transfer"],
-                pass_charge: true
-            })
-        });
-
-        const data = await response.json(); // Parse JSON response
-        console.log("Data: ", data)
-        console.log("Response: ", response)
-
-        if (!response.ok) {
-            throw new Error(data.message || "Payment initiation failed");
-        }
-
-        // Redirect user to the payment checkout URL
-        window.location.href = data.data.checkout_url;
+      // Update wallet balance
+      console.log("PAYMENT WAS SUCCESSFUL")
+      navigate(`/payment-callback?transactionRef=${reference}`)
     } catch (error) {
-        console.error("Payment error:", error);
-        setError(error.message || "Payment failed. Please try again.");
-    } finally {
-        setIsLoading(false);
+      console.error('Payment verification failed:', error);
+      setError('Payment successful but failed to update wallet');
     }
-};
+  };
 
+  const componentProps = {
+    ...config,
+    text: 'Proceed To Payment',
+    onSuccess: (reference) => onSuccess(reference),
+    onClose: () => onClose()
+  }
+
+
+
+  // const handlePayment = () => {
+    
+    
+  //   initializePayment(onSuccess(config.reference), onClose);
+  // };
 
   return (
     <motion.div
@@ -165,7 +131,6 @@ export default function WalletFunding({ onFund, onClose }) {
           </div>
 
           <button
-            onClick={handlePayment}
             disabled={!amount || amount < 100}
             className={`w-full py-2 px-4 rounded-md text-white font-medium
               ${amount && amount >= 100
@@ -173,7 +138,8 @@ export default function WalletFunding({ onFund, onClose }) {
                 : 'bg-gray-300 cursor-not-allowed'
               } transition-all duration-300`}
           >
-            {isLoading ? "Processing..." : "Proceed to Payment"}
+            {isLoading ? "Processing..." : <PaystackButton {...componentProps} />}
+              
           </button>
 
           <p className="text-xs text-gray-500 text-center mt-4">

@@ -31,6 +31,15 @@ export default function Dashboard() {
     "instagram": "Instagram",
     "tiktok": "TikTok",
     "youtube": "YouTube",
+    "twitter": "Twitter",
+    "linkedin": "LinkedIn",
+    "reddit": "Reddit",
+    "pinterest": "Pinterest",
+    "snapchat": "Snapchat",
+    "imbd": "IMDB",
+    "spotify": "Spotify",
+    "telegram": "Telegram",
+    "quora": "Quora",
   })
 
   useEffect(() => {
@@ -55,9 +64,11 @@ export default function Dashboard() {
       formdata.append("key", "yUNY9SCYVkQZIpN1qfge")
       formdata.append("action", "services")
       try {
-        const response = await fetch(`https://boostsmm.ng/api/v1`, {
-          method: 'POST',
-          body: formdata
+        const response = await fetch(`https://hypmas.com/api/v2?action=services&key=opN1lUldwmNpUiXv8wd4fohxandsbd1A0dq5cFwW9SY4TOLdkQA0k7wPpUUf`, {
+          method: 'GET',
+          headers: {
+            "Authorization": "Bearer opN1lUldwmNpUiXv8wd4fohxandsbd1A0dq5cFwW9SY4TOLdkQA0k7wPpUUf"
+          }
         });
         console.log("A: ", response)
         const data = await response.json();
@@ -202,13 +213,75 @@ export default function Dashboard() {
   
 
   // Update the handlePaymentSuccess function
-  const handlePlaceOrder = async () => {
+  const handlePlaceOrder = async (service) => {
     try {
       console.log("Order tried to place")
+      console.log("Service that was placed: ", service)
+
+  
+      // Create order API call
+      const response = await fetch(
+        `https://hypmas.com/api/v2?action=add&service=${selectedService.service}&link=${orderLink}&quantity=${orderQuantity}&key=opN1lUldwmNpUiXv8wd4fohxandsbd1A0dq5cFwW9SY4TOLdkQA0k7wPpUUf`,
+        {
+          method: "GET", // API uses GET parameters, not POST body
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      )
+  
+      if (!response.ok) {
+        throw new Error(`Failed to place order: ${response.status}`)
+      }
+  
+      const orderData = await response.json()
+  
+      if (!orderData.order) {
+        throw new Error("Invalid order response from API")
+      }
+  
+      console.log("Order created successfully:", orderData)
+      const orderNum = orderData.order
+  
+      // Check order status API call
+      const statusResponse = await fetch(
+        `https://hypmas.com/api/v2?action=status&order=${orderNum}&key=opN1lUldwmNpUiXv8wd4fohxandsbd1A0dq5cFwW9SY4TOLdkQA0k7wPpUUf`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      )
+  
+      if (!statusResponse.ok) {
+        throw new Error(`Failed to get order status: ${statusResponse.status}`)
+      }
+  
+      const statusData = await statusResponse.json()
+      console.log("Order status:", statusData)
+  
+      // Handle different status responses
+      if (statusData.status === "Awaiting") {
+        return { success: true, message: "Order is awaiting processing", data: statusData }
+      } else if (statusData.status === "In progress") {
+        return { success: true, message: "Order is in progress", data: statusData }
+      } else if (statusData.status === "Completed") {
+        return { success: true, message: "Order completed successfully", data: statusData }
+      } else if (statusData.status === "Partial") {
+        return { success: true, message: "Order partially completed", data: statusData }
+      } else if (statusData.status === "Canceled" || statusData.status === "Fail") {
+        return { success: false, message: `Order failed: ${statusData.status}`, data: statusData }
+      } else {
+        return { success: true, message: "Order status received", data: statusData }
+      }
     } catch (error) {
-      console.error("Error: ", error)
+      console.error("Error placing order:", error)
+      return { success: false, message: error.message || "An unknown error occurred" }
     }
   }
+  
+  
 
   const handleAmountChange = (e) => {
     const inputAmount = parseFloat(e.target.value);
@@ -488,7 +561,7 @@ export default function Dashboard() {
             </div>
 
             <button
-              onClick={handlePlaceOrder}
+              onClick={() => handlePlaceOrder(selectedService)}
               disabled={!orderQuantity || !orderLink}
               className="w-full bg-gradient-to-r from-pink-500 to-blue-500 text-white py-2 rounded-md hover:from-pink-600 hover:to-blue-600 disabled:opacity-50 mt-4"
             >

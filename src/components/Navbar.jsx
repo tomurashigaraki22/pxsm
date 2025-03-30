@@ -1,12 +1,12 @@
-import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
- 
+import { motion } from 'framer-motion';
+import { useAuth } from '../contexts/AuthContext'; // Add this import
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, logout } = useAuth(); // Add this
 
   useEffect(() => {
     const handleScroll = () => {
@@ -27,6 +27,7 @@ const Navbar = () => {
     >
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
+          {/* Logo */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -43,68 +44,65 @@ const Navbar = () => {
             </Link>
           </motion.div>
 
-          {/* Desktop Menu */}
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {['Services', 'Pricing', 'About', 'Contact'].map((item, index) => (
-              <motion.a
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                className={`text-sm font-medium transition-colors ${
-                  scrolled ? 'text-gray-800 hover:text-pink-500' : 'text-gray-800 hover:text-pink-500'
-                }`}
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * index }}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {item}
-              </motion.a>
-            ))}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5 }}
-            >
+            {!user ? (
+              // Public navigation items
+              ['Services', 'Pricing', 'About', 'Contact'].map((item) => (
+                <motion.a
+                  key={item}
+                  href={`#${item.toLowerCase()}`}
+                  className="text-gray-600 hover:text-pink-500"
+                  whileHover={{ scale: 1.1 }}
+                >
+                  {item}
+                </motion.a>
+              ))
+            ) : (
+              // Authenticated navigation items
+              <>
+                <Link to="/wallet" className="text-gray-600 hover:text-pink-500">Wallet</Link>
+                <Link to="/services" className="text-gray-600 hover:text-pink-500">Services</Link>
+              </>
+            )}
+          </div>
+
+          {/* User Menu / Auth Buttons */}
+          <div className="flex items-center space-x-4">
+            {user ? (
+              <>
+                <span className="hidden md:inline text-sm font-medium text-gray-700">{user.username}</span>
+                <span className="hidden md:inline px-3 py-1 text-sm font-medium text-green-800 bg-green-100 rounded-full">
+                  ₦{user.balance?.toLocaleString() ?? '0'}
+                </span>
+                <button 
+                  onClick={logout}
+                  className="hidden md:inline text-sm text-red-600 hover:text-red-500"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
               <Link to="/login">
                 <motion.button
                   className="px-5 py-2 rounded-full bg-gradient-to-r from-pink-500 to-blue-500 text-white text-sm font-medium"
-                  whileHover={{ scale: 1.05, boxShadow: "0px 5px 15px rgba(236, 72, 153, 0.4)" }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.05 }}
                 >
                   Sign In
                 </motion.button>
               </Link>
-            </motion.div>
-          </div>
+            )}
 
-          {/* Mobile menu button */}
-          <div className="md:hidden">
+            {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="text-gray-800 focus:outline-none"
+              className="md:hidden text-gray-800"
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {mobileMenuOpen ? (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 ) : (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 )}
               </svg>
             </button>
@@ -119,25 +117,45 @@ const Navbar = () => {
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden mt-4 bg-white rounded-lg shadow-lg p-4"
           >
-            <div className="flex flex-col space-y-4">
-              {['Services', 'Pricing', 'About', 'Contact'].map((item) => (
-                <a
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
-                  className="text-gray-800 hover:text-pink-500 py-2 text-center"
-                  onClick={() => setMobileMenuOpen(false)}
+            {user ? (
+              // Authenticated mobile menu
+              <div className="flex flex-col space-y-4">
+                <div className="flex items-center justify-between py-2">
+                  <span className="text-sm font-medium text-gray-700">{user.username}</span>
+                  <span className="px-3 py-1 text-sm font-medium text-green-800 bg-green-100 rounded-full">
+                    ₦{user.balance?.toLocaleString() ?? '0'}
+                  </span>
+                </div>
+                <Link to="/wallet" className="text-gray-600 hover:text-pink-500 py-2">Wallet</Link>
+                <Link to="/services" className="text-gray-600 hover:text-pink-500 py-2">Services</Link>
+                <button 
+                  onClick={logout}
+                  className="text-red-600 hover:text-red-500 py-2 text-left"
                 >
-                  {item}
-                </a>
-              ))}
-              <Link 
-                to="/login"
-                className="bg-gradient-to-r from-pink-500 to-blue-500 text-white py-2 rounded-full text-center"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                Sign In
-              </Link>
-            </div>
+                  Logout
+                </button>
+              </div>
+            ) : (
+              // Public mobile menu
+              <div className="flex flex-col space-y-4">
+                {['Services', 'Pricing', 'About', 'Contact'].map((item) => (
+                  <a
+                    key={item}
+                    href={`#${item.toLowerCase()}`}
+                    className="text-gray-600 hover:text-pink-500 py-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {item}
+                  </a>
+                ))}
+                <Link 
+                  to="/login"
+                  className="bg-gradient-to-r from-pink-500 to-blue-500 text-white py-2 px-4 rounded-full text-center"
+                >
+                  Sign In
+                </Link>
+              </div>
+            )}
           </motion.div>
         )}
       </div>

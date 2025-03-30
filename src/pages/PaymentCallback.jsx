@@ -19,49 +19,6 @@ export default function PaymentCallback() {
     "development" // Environment (change to 'production' when live)
   );
 
-  useEffect(() => {
-    const verifyPayment = async () => {
-      try {
-        const response = await fetch(`https://api-d.squadco.com/transaction/verify/${transactionRef}`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer sk_7bfd64c7c64b3050602b8ed94ad155ec0ac70607`,
-            'Content-Type': 'application/json'
-          }
-        });
-
-        const data = await response.json();
-        console.log('Verification response:', data);
-
-        if (data.status === 200) {
-          if (data.data.transaction_status.toLowerCase() === 'success') {
-            setStatus('success');
-            await handlePaymentSuccess();
-            setTimeout(() => navigate('/dashboard'), 5000);
-          } else if (data.data.transaction_status.toLowerCase() === 'pending') {
-            setStatus('verifying');
-            // Retry verification after 5 seconds
-            setTimeout(verifyPayment, 5000);
-          } else {
-            setStatus('failed');
-            setTimeout(() => navigate('/dashboard'), 5000);
-          }
-        } else {
-          setStatus('failed');
-          setTimeout(() => navigate('/dashboard'), 5000);
-        }
-      } catch (error) {
-        console.error('Verification failed:', error);
-        setStatus('failed');
-        setTimeout(() => navigate('/dashboard'), 5000);
-      }
-    };
-
-    if (transactionRef) {
-      verifyPayment();
-    }
-  }, [transactionRef, navigate, amount, squad.privateKey]);
-
   const handlePaymentSuccess = async () => {
     try {
       const response = await fetch(`${API_URL}/balance/update`, {
@@ -88,6 +45,70 @@ export default function PaymentCallback() {
       // But we'll log the error for backend investigation
     }
   };
+
+
+  useEffect(() => {
+    const verifyPayment = async () => {
+      try {
+        const response = await fetch(`https://api.paystack.co/transaction/verify/${transactionRef}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer sk_test_cae427bffcb654406e4b0037aab91cb54c517948`,
+            "Content-Type": "application/json",
+          },
+        })
+
+        const data = await response.json()
+        console.log("Verification response:", data)
+
+        // Check if the API call was successful
+        if (data.status) {
+          // Get the transaction status from data.data.status
+          const transactionStatus = data.data.status.toLowerCase()
+
+          switch (transactionStatus) {
+            case "success":
+              setStatus("success")
+              await handlePaymentSuccess()
+              setTimeout(() => navigate("/dashboard"), 5000)
+              break
+
+            case "pending":
+            case "ongoing":
+            case "processing":
+              setStatus("verifying")
+              // Retry verification after 5 seconds
+              setTimeout(verifyPayment, 5000)
+              break
+
+            case "abandoned":
+            case "failed":
+            case "reversed":
+            case "queued":
+              setStatus("failed")
+              break
+
+            default:
+              setStatus("failed")
+          }
+        } else {
+          // API call was not successful
+          console.error("Verification API call failed:", data.message)
+          setStatus("failed")
+        }
+      } catch (error) {
+        console.error("Verification failed:", error)
+        setStatus("failed")
+      }
+    }
+
+    if (transactionRef) {
+      verifyPayment()
+    }
+  }, [transactionRef, navigate, handlePaymentSuccess])
+
+
+  
   
 
   return (
