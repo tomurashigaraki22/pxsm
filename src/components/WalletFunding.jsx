@@ -50,7 +50,10 @@ export default function WalletFunding({ onFund, onClose }) {
   const componentProps = {
     ...config,
     text: 'Proceed To Payment',
-    onSuccess: (reference) => onSuccess(reference),
+    onSuccess: (reference) => {
+      console.log("RE: ", reference.reference);
+      onSuccess(reference.reference);
+    },
     onClose: () => onClose()
   }
 
