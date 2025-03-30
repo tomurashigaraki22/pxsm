@@ -63,6 +63,7 @@ const Navbar = () => {
               <>
                 <Link to="/wallet" className="text-gray-600 hover:text-pink-500">Wallet</Link>
                 <Link to="/services" className="text-gray-600 hover:text-pink-500">Services</Link>
+                <Link to="/order-history" className="text-gray-600 hover:text-pink-500">Order History</Link>
               </>
             )}
           </div>

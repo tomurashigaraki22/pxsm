@@ -40,7 +40,7 @@ export default function WalletFunding({ onFund, onClose }) {
     try {
       // Update wallet balance
       console.log("PAYMENT WAS SUCCESSFUL")
-      navigate(`/payment-callback?transactionRef=${reference}`)
+      navigate(`/payment-callback?transactionRef=${reference}&amount=${parseInt(amount)}`)
     } catch (error) {
       console.error('Payment verification failed:', error);
       setError('Payment successful but failed to update wallet');

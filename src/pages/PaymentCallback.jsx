@@ -21,6 +21,7 @@ export default function PaymentCallback() {
 
   const handlePaymentSuccess = async () => {
     try {
+      console.log("USER: ", user, " amount: ", amount)
       const response = await fetch(`${API_URL}/balance/update`, {
         method: 'POST',
         headers: {
