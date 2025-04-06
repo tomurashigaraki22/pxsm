@@ -43,7 +43,6 @@ export default function Dashboard() {
     "spotify": "Spotify",
     "telegram": "Telegram",
     "quora": "Quora",
-    "discord": "Discord",
     "whatsapp": "WhatsApp",
     "web": "Web Traffic"
   })
