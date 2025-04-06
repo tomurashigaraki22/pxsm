@@ -54,7 +54,7 @@ export default function PaymentCallback() {
         const response = await fetch(`https://api.paystack.co/transaction/verify/${transactionRef}`, {
           method: "GET",
           headers: {
-            Authorization: `Bearer sk_test_cae427bffcb654406e4b0037aab91cb54c517948`,
+            Authorization: `Bearer sk_live_b1e2e3c5917c1a08f9d0bdf117722916c1fcc5ea`,
             "Content-Type": "application/json",
           },
         })
