@@ -10,13 +10,13 @@ import PaymentCallback from './pages/PaymentCallback';
 import { useEffect } from 'react';
 
 function App() {
-  useEffect(() => {
-    const as = () => {
-      alert("Welcome to social boost")
-    }
+  // useEffect(() => {
+  //   const as = () => {
+  //     alert("Welcome to social boost")
+  //   }
 
-    as();
-  })
+  //   as();
+  // })
   return (
     <AuthProvider>
       <Router>
