@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from 'framer-motion';
 import Navbar from '../components/Navbar';
+import SEO from '../components/SEO';
 
 function Home() {
     const navigate = useNavigate();
@@ -123,7 +124,10 @@ function Home() {
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-pink-100 to-blue-100 relative">
-        {/* Animated background gradient */}
+      <SEO 
+        title="Home"
+        description="Boost your social media presence with our premium services. Get real followers, likes, and engagement across all major platforms."
+        keywords="social media marketing, followers, likes, engagement, Instagram, Facebook, Twitter, TikTok"/>
         <motion.div 
           className="fixed inset-0 -z-10"
           animate={{
