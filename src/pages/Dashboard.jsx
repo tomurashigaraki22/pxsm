@@ -95,10 +95,10 @@ useEffect(() => {
       formdata.append("key", "yUNY9SCYVkQZIpN1qfge")
       formdata.append("action", "services")
       try {
-        const response = await fetch(`https://hypmas.com/api/v2?action=services&key=opN1lUldwmNpUiXv8wd4fohxandsbd1A0dq5cFwW9SY4TOLdkQA0k7wPpUUf`, {
+        const response = await fetch(`https://hypmas.com/api/v2?action=services&key=nVJQekfM1C2HWJd7RDp0BDCLI3oKnfepxQ9nsEOfWfvWyPmq8tqxPvqsEXYl`, {
           method: 'GET',
           headers: {
-            "Authorization": "Bearer opN1lUldwmNpUiXv8wd4fohxandsbd1A0dq5cFwW9SY4TOLdkQA0k7wPpUUf"
+            "Authorization": "Bearer nVJQekfM1C2HWJd7RDp0BDCLI3oKnfepxQ9nsEOfWfvWyPmq8tqxPvqsEXYl"
           }
         });
         const data = await response.json();
@@ -248,7 +248,7 @@ useEffect(() => {
   
       // Create order API call
       const response = await fetch(
-        `https://hypmas.com/api/v2?action=add&service=${selectedService.service}&link=${orderLink}&quantity=${orderQuantity}&key=opN1lUldwmNpUiXv8wd4fohxandsbd1A0dq5cFwW9SY4TOLdkQA0k7wPpUUf`,
+        `https://hypmas.com/api/v2?action=add&service=${selectedService.service}&link=${orderLink}&quantity=${orderQuantity}&key=nVJQekfM1C2HWJd7RDp0BDCLI3oKnfepxQ9nsEOfWfvWyPmq8tqxPvqsEXYl`,
         {
           method: "GET", // API uses GET parameters, not POST body
           headers: {
@@ -325,7 +325,7 @@ useEffect(() => {
   
       // Check order status API call
       const statusResponse = await fetch(
-        `https://hypmas.com/api/v2?action=status&order=${orderNum}&key=opN1lUldwmNpUiXv8wd4fohxandsbd1A0dq5cFwW9SY4TOLdkQA0k7wPpUUf`,
+        `https://hypmas.com/api/v2?action=status&order=${orderNum}&key=nVJQekfM1C2HWJd7RDp0BDCLI3oKnfepxQ9nsEOfWfvWyPmq8tqxPvqsEXYl`,
         {
           method: "GET",
           headers: {
