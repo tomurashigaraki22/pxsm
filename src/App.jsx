@@ -7,8 +7,16 @@ import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import NotFound from './pages/NotFound';
 import PaymentCallback from './pages/PaymentCallback';
+import { useEffect } from 'react';
 
 function App() {
+  useEffect(() => {
+    const as = () => {
+      alert("Welcome to social boost")
+    }
+
+    as();
+  })
   return (
     <AuthProvider>
       <Router>
