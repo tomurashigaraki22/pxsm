@@ -478,8 +478,36 @@ function Home() {
               </motion.div>
             </div>
           </motion.section>
-        </main>
+          </main>
+
+{/* Footer Section */}
+<footer className="bg-white/80 backdrop-blur-sm py-8 border-t border-gray-100">
+  <div className="container mx-auto px-4">
+    <div className="flex flex-col md:flex-row justify-between items-center">
+      <div className="mb-4 md:mb-0">
+        <h3 className="text-xl font-bold bg-gradient-to-r from-pink-500 to-blue-500 bg-clip-text text-transparent">
+          SocialBoost
+        </h3>
+        <p className="text-sm text-gray-600 mt-1">© 2025 All rights reserved</p>
       </div>
+      <div className="flex space-x-6">
+        <button
+          onClick={() => navigate('/login')}
+          className="text-gray-600 hover:text-pink-500 transition-colors duration-300"
+        >
+          Login
+        </button>
+        <button
+          onClick={() => navigate('/signup')}
+          className="text-gray-600 hover:text-blue-500 transition-colors duration-300"
+        >
+          Sign Up
+        </button>
+      </div>
+    </div>
+  </div>
+</footer>
+</div>
     );
 }
 

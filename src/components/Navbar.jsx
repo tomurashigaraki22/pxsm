@@ -48,16 +48,17 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-8">
             {!user ? (
               // Public navigation items
-              ['Services', 'Pricing', 'About', 'Contact'].map((item) => (
-                <motion.a
-                  key={item}
-                  href={`#${item.toLowerCase()}`}
-                  className="text-gray-600 hover:text-pink-500"
-                  whileHover={{ scale: 1.1 }}
-                >
-                  {item}
-                </motion.a>
-              ))
+              <>
+                <Link to="/login" className="text-gray-600 hover:text-pink-500">
+                  Services
+                </Link>
+                <Link to="/login" className="text-gray-600 hover:text-pink-500">
+                  Login
+                </Link>
+                <Link to="/signup" className="text-gray-600 hover:text-pink-500">
+                  Sign Up
+                </Link>
+              </>
             ) : (
               // Authenticated navigation items
               <>
@@ -139,21 +140,26 @@ const Navbar = () => {
             ) : (
               // Public mobile menu
               <div className="flex flex-col space-y-4">
-                {['Services', 'Pricing', 'About', 'Contact'].map((item) => (
-                  <a
-                    key={item}
-                    href={`#${item.toLowerCase()}`}
-                    className="text-gray-600 hover:text-pink-500 py-2"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {item}
-                  </a>
-                ))}
-                <Link 
+                <Link
                   to="/login"
-                  className="bg-gradient-to-r from-pink-500 to-blue-500 text-white py-2 px-4 rounded-full text-center"
+                  className="text-gray-600 hover:text-pink-500 py-2"
+                  onClick={() => setMobileMenuOpen(false)}
                 >
-                  Sign In
+                  Services
+                </Link>
+                <Link
+                  to="/login"
+                  className="text-gray-600 hover:text-pink-500 py-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/signup"
+                  className="text-gray-600 hover:text-pink-500 py-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Sign Up
                 </Link>
               </div>
             )}
