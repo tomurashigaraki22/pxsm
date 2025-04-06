@@ -24,7 +24,7 @@ export default function WalletFunding({ onFund, onClose }) {
     reference: `wallet_funding_${Date.now()}`,
     email: user.email,
     amount: Number(amount) * 100, // Paystack amount is in kobo
-    publicKey: 'pk_test_aa75f665e51af7dd84de924db2bf1c5c1b3bac48',
+    publicKey: 'pk_live_bd26a2dd4f1554f4d1ac55346b17f139d3dbe903',
     metadata: {
       custom_fields: [
         {

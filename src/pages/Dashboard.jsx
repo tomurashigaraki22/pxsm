@@ -43,6 +43,9 @@ export default function Dashboard() {
     "spotify": "Spotify",
     "telegram": "Telegram",
     "quora": "Quora",
+    "discord": "Discord",
+    "whatsapp": "WhatsApp",
+    "web": "Web Traffic"
   })
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const toggleMobileMenu = () => {
@@ -93,10 +96,10 @@ useEffect(() => {
       formdata.append("key", "yUNY9SCYVkQZIpN1qfge")
       formdata.append("action", "services")
       try {
-        const response = await fetch(`https://hypmas.com/api/v2?action=services&key=opN1lUldwmNpUiXv8wd4fohxandsbd1A0dq5cFwW9SY4TOLdkQA0k7wPpUUf`, {
+        const response = await fetch(`https://hypmas.com/api/v2?action=services&key=1CUbxyXgcUwO4gukI30rFNGRBbIsAtivr215nfxzr8ey0hNmVB8z0dIIPQKX`, {
           method: 'GET',
           headers: {
-            "Authorization": "Bearer opN1lUldwmNpUiXv8wd4fohxandsbd1A0dq5cFwW9SY4TOLdkQA0k7wPpUUf"
+            "Authorization": "Bearer 1CUbxyXgcUwO4gukI30rFNGRBbIsAtivr215nfxzr8ey0hNmVB8z0dIIPQKX"
           }
         });
         const data = await response.json();
@@ -246,7 +249,7 @@ useEffect(() => {
   
       // Create order API call
       const response = await fetch(
-        `https://hypmas.com/api/v2?action=add&service=${selectedService.service}&link=${orderLink}&quantity=${orderQuantity}&key=opN1lUldwmNpUiXv8wd4fohxandsbd1A0dq5cFwW9SY4TOLdkQA0k7wPpUUf`,
+        `https://hypmas.com/api/v2?action=add&service=${selectedService.service}&link=${orderLink}&quantity=${orderQuantity}&key=1CUbxyXgcUwO4gukI30rFNGRBbIsAtivr215nfxzr8ey0hNmVB8z0dIIPQKX`,
         {
           method: "GET", // API uses GET parameters, not POST body
           headers: {
@@ -323,7 +326,7 @@ useEffect(() => {
   
       // Check order status API call
       const statusResponse = await fetch(
-        `https://hypmas.com/api/v2?action=status&order=${orderNum}&key=opN1lUldwmNpUiXv8wd4fohxandsbd1A0dq5cFwW9SY4TOLdkQA0k7wPpUUf`,
+        `https://hypmas.com/api/v2?action=status&order=${orderNum}&key=1CUbxyXgcUwO4gukI30rFNGRBbIsAtivr215nfxzr8ey0hNmVB8z0dIIPQKX`,
         {
           method: "GET",
           headers: {
@@ -820,12 +823,12 @@ useEffect(() => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
                 <input
                   type="number"
-                  min={1000}
+                  min={selectedService.min}
                   max={selectedService.max}
                   value={orderQuantity}
                   onChange={(e) => setOrderQuantity(e.target.value)}
                   className="w-full border border-gray-300 rounded-md p-2 focus:ring-pink-500 focus:border-pink-500"
-                  placeholder={`Min: ${1000} - Max: ${selectedService.max}`}
+                  placeholder={`Min: ${selectedService.min} - Max: ${selectedService.max}`}
                 />
               </div>
   
