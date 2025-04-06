@@ -216,6 +216,9 @@ useEffect(() => {
   };
 
   const calculateRateWithProfit = (baseRate) => {
+    if (parseInt(baseRate) > 10000){
+      return (baseRate * 1.15).toFixed(2); // Multiply by 1.15 and round to 2 decimal places
+    }
     return (baseRate * 1.4).toFixed(2); // Multiply by 1.4 and round to 2 decimal places
   };
 
