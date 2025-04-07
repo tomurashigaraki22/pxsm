@@ -6,6 +6,7 @@ import axios from 'axios';
 import { API_URL } from '../config';
 import { useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
+import { getServices } from '../components/api';
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('wallet');
@@ -83,15 +84,8 @@ export default function Dashboard() {
   }, [selectedPlatform, services]);
   useEffect(() => {
     const fetchServices = async () => {
-      try {
-        const response = await fetch(`https://app.sizzle.ng/api/v1?action=services&key=80N1Xb27bTOlDym3xytiXndLkmH0TjpE`);
-        const data = await response.json();
-        setServices(data);
-      } catch (error) {
-        console.error('Failed to fetch services:', error);
-      } finally {
-        setIsServicesLoading(false);
-      }
+      const data = await getServices();
+      setServices(data);
     };
     fetchServices();
   }, []);
