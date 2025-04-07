@@ -16,18 +16,17 @@ export default function Dashboard() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
     // Services State
-    const [selectedService, setSelectedService] = useState(null);
+  const [selectedService, setSelectedService] = useState(null);
 
-    const [showPayment, setShowPayment] = useState(false);
-    const [fundingAmount, setFundingAmount] = useState(0);
-   // Add these new states at the top
-   const [isServicesLoading, setIsServicesLoading] = useState(true);
-   const [services, setServices] = useState([]);
-   const [selectedPlatform, setSelectedPlatform] = useState(null);
-   const [filteredServices, setFilteredServices] = useState(services);
+  const [showPayment, setShowPayment] = useState(false);
+  const [fundingAmount, setFundingAmount] = useState(0);
+  const [isServicesLoading, setIsServicesLoading] = useState(true);
+  const [services, setServices] = useState([]);
+  const [selectedPlatform, setSelectedPlatform] = useState(null);
+  const [filteredServices, setFilteredServices] = useState(services);
 
-   const [orderQuantity, setOrderQuantity] = useState('');
-   const [orderLink, setOrderLink] = useState('');
+  const [orderQuantity, setOrderQuantity] = useState('');
+  const [orderLink, setOrderLink] = useState('');
   const [transactions, setTransactions] = useState([])
   const [platforms, setPlatforms] = useState({
     "facebook": "Facebook",
@@ -51,29 +50,27 @@ export default function Dashboard() {
     setIsMobileMenuOpen(!isMobileMenuOpen)
   }
   const [orders, setOrders] = useState([]);
-const [isOrdersLoading, setIsOrdersLoading] = useState(true);
+  const [isOrdersLoading, setIsOrdersLoading] = useState(true);
 
-// Add this useEffect after your other useEffects
-useEffect(() => {
-  const fetchOrders = async () => {
-    try {
-      const response = await fetch(`${API_URL}/orders/${user.id}`);
-      const data = await response.json();
-      if (response.ok && data.orders) {
-        setOrders(data.orders);
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await fetch(`${API_URL}/orders/${user.id}`);
+        const data = await response.json();
+        if (response.ok && data.orders) {
+          setOrders(data.orders);
+        }
+      } catch (error) {
+        console.error('Failed to fetch orders:', error);
+      } finally {
+        setIsOrdersLoading(false);
       }
-    } catch (error) {
-      console.error('Failed to fetch orders:', error);
-    } finally {
-      setIsOrdersLoading(false);
+    };
+
+    if (user?.id) {
+      fetchOrders();
     }
-  };
-
-  if (user?.id) {
-    fetchOrders();
-  }
-}, [user]);
-
+  }, [user]);
   useEffect(() => {
     if (selectedPlatform) {
       setFilteredServices(services.filter(service => 
@@ -84,25 +81,11 @@ useEffect(() => {
       setFilteredServices(services);
     }
   }, [selectedPlatform, services]);
-
-
- 
-  
-  // Add this useEffect to fetch services
   useEffect(() => {
     const fetchServices = async () => {
-      const formdata = new FormData()
-      formdata.append("key", "yUNY9SCYVkQZIpN1qfge")
-      formdata.append("action", "services")
       try {
-        const response = await fetch(`https://app.sizzle.ng/api/v1?action=services&key=80N1Xb27bTOlDym3xytiXndLkmH0TjpE`, {
-          method: 'GET',
-          headers: {
-            "Authorization": "Bearer 80N1Xb27bTOlDym3xytiXndLkmH0TjpE"
-          }
-        });
+        const response = await fetch(`https://app.sizzle.ng/api/v1?action=services&key=80N1Xb27bTOlDym3xytiXndLkmH0TjpE`);
         const data = await response.json();
-        console.log("SERVICES: ", data)
         setServices(data);
       } catch (error) {
         console.error('Failed to fetch services:', error);
@@ -110,11 +93,8 @@ useEffect(() => {
         setIsServicesLoading(false);
       }
     };
-  
     fetchServices();
   }, []);
-  
-
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
@@ -135,14 +115,10 @@ useEffect(() => {
     }
   }, [user]);
 
-  // Wallet State
-  // Replace the static wallet balance
   const [walletBalance, setWalletBalance] = useState(0);
-  
-  // Add this near your other state declarations
   const [isLoading, setIsLoading] = useState(true);
   
-  // Update your useEffect
+
   useEffect(() => {
     const fetchBalance = async () => {
       try {
@@ -162,10 +138,6 @@ useEffect(() => {
       fetchBalance();
     }
   }, [user]);
-  
-  // Replace the balance display with this
-  
-  
   const handlePaymentSuccess = async (amount) => {
     try {
       const response = await fetch(`${API_URL}/balance/update`, {
@@ -207,10 +179,6 @@ useEffect(() => {
     }
     setShowPayment(false);
   };
-  
-
-
-
   const handleFundWallet = () => {
     setShowPayment(true);
   };
@@ -223,9 +191,7 @@ useEffect(() => {
     }
     return (baseRate * 1.4).toFixed(2); // Multiply by 1.4 and round to 2 decimal places
   };
-
   const [rate, setRate] = useState(0)
-
   const handleServiceChange = (event) => {
     const selectedServiceName = event.target.value;
     const serviceDetails = services.find(service => parseFloat(service.service) === parseFloat(selectedServiceName));
@@ -237,9 +203,6 @@ useEffect(() => {
       setRate(updatedRate);
     }
   };
-  
-
-  // Update the handlePaymentSuccess function
   const handlePlaceOrder = async (service) => {
     try {
       console.log("Order tried to place")
@@ -484,9 +447,6 @@ useEffect(() => {
       return { success: false, message: error.message || "An unknown error occurred" }
     }
   }
-  
-  
-
   const handleAmountChange = (e) => {
     const inputAmount = parseInt(e.target.value);
     if (!isNaN(inputAmount)) {
@@ -497,7 +457,6 @@ useEffect(() => {
     }
   };
   
-
 
   return (
     <div className="min-h-screen bg-gray-50">
