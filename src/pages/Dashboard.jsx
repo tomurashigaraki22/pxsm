@@ -82,7 +82,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await fetch(`/api?action=services&key=80N1Xb27bTOlDym3xytiXndLkmH0TjpE`);
+        const response = await fetch(`/api/proxy?action=services`);
         const data = await response.json();
         setServices(data);
       } catch (error) {
@@ -91,8 +91,10 @@ export default function Dashboard() {
         setIsServicesLoading(false);
       }
     };
+  
     fetchServices();
   }, []);
+  
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
