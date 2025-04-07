@@ -216,7 +216,7 @@ export default function Dashboard() {
   
       // Create order API call
       const response = await fetch(
-        `/api?action=add&service=${selectedService.service}&link=${orderLink}&quantity=${orderQuantity}&key=80N1Xb27bTOlDym3xytiXndLkmH0TjpE`,
+        `/api/proxy?action=add&service=${selectedService.service}&link=${orderLink}&quantity=${orderQuantity}&key=80N1Xb27bTOlDym3xytiXndLkmH0TjpE`,
         {
           method: "GET", // API uses GET parameters, not POST body
           headers: {
@@ -293,7 +293,7 @@ export default function Dashboard() {
   
       // Check order status API call
       const statusResponse = await fetch(
-        `/api?action=status&order=${orderNum}&key=80N1Xb27bTOlDym3xytiXndLkmH0TjpE`,
+        `/api/proxy?action=status&order=${orderNum}&key=80N1Xb27bTOlDym3xytiXndLkmH0TjpE`,
         {
           method: "GET",
           headers: {
