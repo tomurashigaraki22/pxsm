@@ -6,7 +6,6 @@ import axios from 'axios';
 import { API_URL } from '../config';
 import { useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
-import { getServices } from '../components/api';
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('wallet');
@@ -37,9 +36,6 @@ export default function Dashboard() {
     "twitter": "Twitter",
     "linkedin": "LinkedIn",
     "reddit": "Reddit",
-    "pinterest": "Pinterest",
-    "snapchat": "Snapchat",
-    "imbd": "IMDB",
     "spotify": "Spotify",
     "telegram": "Telegram",
     "quora": "Quora",
@@ -84,8 +80,15 @@ export default function Dashboard() {
   }, [selectedPlatform, services]);
   useEffect(() => {
     const fetchServices = async () => {
-      const data = await getServices();
-      setServices(data);
+      try {
+        const response = await fetch(`/api?action=services&key=80N1Xb27bTOlDym3xytiXndLkmH0TjpE`);
+        const data = await response.json();
+        setServices(data);
+      } catch (error) {
+        console.error('Failed to fetch services:', error);
+      } finally {
+        setIsServicesLoading(false);
+      }
     };
     fetchServices();
   }, []);
@@ -210,7 +213,7 @@ export default function Dashboard() {
   
       // Create order API call
       const response = await fetch(
-        `https://app.sizzle.ng/api/v1?action=add&service=${selectedService.service}&link=${orderLink}&quantity=${orderQuantity}&key=80N1Xb27bTOlDym3xytiXndLkmH0TjpE`,
+        `/api?action=add&service=${selectedService.service}&link=${orderLink}&quantity=${orderQuantity}&key=80N1Xb27bTOlDym3xytiXndLkmH0TjpE`,
         {
           method: "GET", // API uses GET parameters, not POST body
           headers: {
@@ -255,9 +258,9 @@ export default function Dashboard() {
       }
   
       const orderData = await response.json()
-      console.log("Order data: ", orderData)
-      if (!orderData.order) {
-        console.log("Order data: ", orderData)
+      console.log("Order data1: ", orderData)
+      if (!orderData.order || orderData.error) {
+        console.log("Order data2: ", orderData)
         console.log("Invalid order response from API")
         const response = await fetch(`${API_URL}/orders/create`, {
           method: 'POST',
@@ -287,7 +290,7 @@ export default function Dashboard() {
   
       // Check order status API call
       const statusResponse = await fetch(
-        `https://app.sizzle.ng/api/v1?action=status&order=${orderNum}&key=80N1Xb27bTOlDym3xytiXndLkmH0TjpE`,
+        `/api?action=status&order=${orderNum}&key=80N1Xb27bTOlDym3xytiXndLkmH0TjpE`,
         {
           method: "GET",
           headers: {
