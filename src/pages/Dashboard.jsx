@@ -23,7 +23,7 @@ export default function Dashboard() {
   const [isServicesLoading, setIsServicesLoading] = useState(true);
   const [services, setServices] = useState([]);
   const [selectedPlatform, setSelectedPlatform] = useState(null);
-  const [filteredServices, setFilteredServices] = useState(services);
+  const [filteredServices, setFilteredServices] = useState([]);
 
   const [orderQuantity, setOrderQuantity] = useState('');
   const [orderLink, setOrderLink] = useState('');
@@ -69,16 +69,21 @@ export default function Dashboard() {
       fetchOrders();
     }
   }, [user]);
-  useEffect(() => {
-    if (selectedPlatform) {
-      setFilteredServices(services.filter(service => 
-        service.name.toLowerCase().includes(selectedPlatform.toLowerCase())
-      ));
-      
-    } else {
-      setFilteredServices(services);
-    }
-  }, [selectedPlatform, services]);
+
+useEffect(() => {
+  console.log("Array: ", services)
+  if (selectedPlatform && Array.isArray(services)) {
+    console.log("ArrayL")
+    setFilteredServices(services.filter(service => 
+      service.name.toLowerCase().includes(selectedPlatform.toLowerCase())
+    ));
+  } else if (Array.isArray(services)) {
+    setFilteredServices(services);
+  } else {
+    setFilteredServices([]); 
+  }
+}, [selectedPlatform, services]);
+
   useEffect(() => {
     const fetchServices = async () => {
       try {
@@ -310,7 +315,7 @@ export default function Dashboard() {
       console.log("Order status:", statusData)
   
       // Handle different status responses
-      if (statusData.status === "Awaiting") {const response = await fetch(`${API_URL}/orders/create`, {
+      if (statusData.status === "Pending") {const response = await fetch(`${API_URL}/orders/create`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

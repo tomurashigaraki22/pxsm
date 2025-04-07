@@ -1,26 +1,32 @@
 // api/proxy.js
 
 export default async function handler(req, res) {
-    const { query, method } = req;
+    const { method, query } = req;
   
-    const key = "80N1Xb27bTOlDym3xytiXndLkmH0TjpE"; // Store this securely in Vercel dashboard
+    const apiKey = "80N1Xb27bTOlDym3xytiXndLkmH0TjpE";
   
-    const finalQuery = new URLSearchParams({
-      ...query,
-      key, // Inject the secret key from env
-    }).toString();
+    if (!apiKey) {
+      return res.status(500).json({ error: "API key missing in environment variables" });
+    }
   
-    const url = `https://app.sizzle.ng/api/v1?${finalQuery}`;
+    const action = query.action;
+    const queryParams = new URLSearchParams({ ...query, key: apiKey }).toString();
+  
+    const apiUrl = `https://app.sizzle.ng/api/v1?${queryParams}`;
   
     try {
-      const response = await fetch(url, {
-        method,
+      const response = await fetch(apiUrl, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
   
-      const data = await response.json();
-      res.status(200).json(data);
-    } catch (error) {
-      res.status(500).json({ error: 'Proxy request failed', details: error.message });
+      const result = await response.json();
+  
+      return res.status(200).json(result);
+    } catch (err) {
+      return res.status(500).json({ error: "Proxy failed", details: err.message });
     }
   }
   
