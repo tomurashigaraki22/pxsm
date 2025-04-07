@@ -95,10 +95,10 @@ useEffect(() => {
       formdata.append("key", "yUNY9SCYVkQZIpN1qfge")
       formdata.append("action", "services")
       try {
-        const response = await fetch(`https://hypmas.com/api/v2?action=services&key=nVJQekfM1C2HWJd7RDp0BDCLI3oKnfepxQ9nsEOfWfvWyPmq8tqxPvqsEXYl`, {
+        const response = await fetch(`https://app.sizzle.ng/api/v1?action=services&key=80N1Xb27bTOlDym3xytiXndLkmH0TjpE`, {
           method: 'GET',
           headers: {
-            "Authorization": "Bearer nVJQekfM1C2HWJd7RDp0BDCLI3oKnfepxQ9nsEOfWfvWyPmq8tqxPvqsEXYl"
+            "Authorization": "Bearer 80N1Xb27bTOlDym3xytiXndLkmH0TjpE"
           }
         });
         const data = await response.json();
@@ -253,7 +253,7 @@ useEffect(() => {
   
       // Create order API call
       const response = await fetch(
-        `https://hypmas.com/api/v2?action=add&service=${selectedService.service}&link=${orderLink}&quantity=${orderQuantity}&key=nVJQekfM1C2HWJd7RDp0BDCLI3oKnfepxQ9nsEOfWfvWyPmq8tqxPvqsEXYl`,
+        `https://app.sizzle.ng/api/v1?action=add&service=${selectedService.service}&link=${orderLink}&quantity=${orderQuantity}&key=80N1Xb27bTOlDym3xytiXndLkmH0TjpE`,
         {
           method: "GET", // API uses GET parameters, not POST body
           headers: {
@@ -330,7 +330,7 @@ useEffect(() => {
   
       // Check order status API call
       const statusResponse = await fetch(
-        `https://hypmas.com/api/v2?action=status&order=${orderNum}&key=nVJQekfM1C2HWJd7RDp0BDCLI3oKnfepxQ9nsEOfWfvWyPmq8tqxPvqsEXYl`,
+        `https://app.sizzle.ng/api/v1?action=status&order=${orderNum}&key=80N1Xb27bTOlDym3xytiXndLkmH0TjpE`,
         {
           method: "GET",
           headers: {
