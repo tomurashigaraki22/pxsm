@@ -40,7 +40,8 @@ export default function Dashboard() {
     "telegram": "Telegram",
     "quora": "Quora",
     "whatsapp": "WhatsApp",
-    "web": "Web Traffic"
+    "web": "Web Traffic",
+    "boomplay": "Boomplay",
   })
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const toggleMobileMenu = () => {
