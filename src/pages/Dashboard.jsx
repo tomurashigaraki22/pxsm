@@ -9,6 +9,7 @@ import { Menu, X } from 'lucide-react';
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('wallet');
+  const [isPlacingOrder, setisPlacingOrder] = useState(false)
   const [isTransactionsLoading, setIsTransactionsLoading] = useState(true)
   const { user, logout } = useAuth();
   const navigate = useNavigate()
@@ -209,6 +210,7 @@ useEffect(() => {
     }
   };
   const handlePlaceOrder = async (service) => {
+    setisPlacingOrder(true)
     try {
       console.log("Order tried to place")
       console.log("Service that was placed: ", service)
@@ -429,6 +431,7 @@ useEffect(() => {
       }
     } catch (error) {
       console.error("Error placing order:", error)
+      setisPlacingOrder(false)
       const response = await fetch(`${API_URL}/orders/create`, {
         method: 'POST',
         headers: {
@@ -450,6 +453,9 @@ useEffect(() => {
       console.log("Order created in database")
       navigate("/")
       return { success: false, message: error.message || "An unknown error occurred" }
+    }
+    finally{
+      setisPlacingOrder(false)
     }
   }
   const handleAmountChange = (e) => {
@@ -829,10 +835,10 @@ useEffect(() => {
   
               <button
                 onClick={() => handlePlaceOrder(selectedService)}
-                disabled={!orderQuantity || !orderLink}
+                disabled={!orderQuantity || !orderLink || isPlacingOrder}
                 className="w-full bg-gradient-to-r from-pink-500 to-blue-500 text-white py-2 rounded-md hover:from-pink-600 hover:to-blue-600 disabled:opacity-50 mt-4"
               >
-                Place Order
+                {isPlacingOrder? "Placing Order..." : "Place Order"}
               </button>
             </>
           )}
