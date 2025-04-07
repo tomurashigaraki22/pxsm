@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { createHtmlPlugin } from 'vite-plugin-html'
 import fs from 'fs'
 
 // https://vite.dev/config/
@@ -22,21 +23,24 @@ export default defineConfig({
     }
   },
   build: {
-    // ...
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ['react', 'react-dom', 'react-router-dom'],
+        },
+      },
+    },
   },
   plugins: [
     react(),
-    {
-      name: 'html-transform',
-      transformIndexHtml(html) {
-        return html.replace(
-          /<title>(.*?)<\/title>/,
-          `<title>SocialBoost - Grow Your Social Media Presence</title>
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <meta name="theme-color" content="#EC4899" />
-          <link rel="canonical" href="https://pxsm.vercel.app" />`
-        );
+    createHtmlPlugin({
+      minify: true,
+      inject: {
+        data: {
+          title: 'Social Boost',
+          description: 'Boost your social media presence with our premium social media marketing services. Get real followers, likes, and engagement.',
+        },
       },
-    },
+    }),
   ],
 })
