@@ -813,6 +813,17 @@ useEffect(() => {
                   placeholder="Enter your link"
                 />
               </div>
+
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Agent ID</label>
+                <input
+                  type="text"
+                  value={orderLink}
+                  onChange={(e) => setOrderLink(e.target.value)}
+                  className="w-full border border-gray-300 rounded-md p-2 focus:ring-pink-500 focus:border-pink-500"
+                  placeholder="Enter agent referral"
+                />
+              </div>
   
               {/* Order Summary */}
               <div className="bg-gray-50 p-4 rounded-md mt-4">
