@@ -478,6 +478,7 @@ useEffect(() => {
   };
 
   const validateAgentId = async (id) => {
+    setisValidatingAgent(true)
     if (!id){
       setIsValidAgent(false);
       setAgentError("Agent id not sent")
@@ -499,6 +500,8 @@ useEffect(() => {
       console.log("Error: ", error)
       setIsValidAgent(false)
       setAgentError("Error validating agent id")
+    } finally{
+      setisValidatingAgent(false)
     }
   }
   
