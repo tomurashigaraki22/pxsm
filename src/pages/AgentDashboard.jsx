@@ -1,0 +1,520 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { Menu, X, DollarSign, Users, TrendingUp, Clock } from 'lucide-react';
+
+export default function AgentDashboard() {
+  const [activeTab, setActiveTab] = useState('overview');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  
+  // Dummy data for the agent dashboard
+  const [agentData, setAgentData] = useState({
+    id: localStorage.getItem('agentId') || 'AG12345',
+    totalEarnings: 125000,
+    pendingWithdrawals: 15000,
+    totalReferrals: 28,
+    activeReferrals: 12,
+    recentReferrals: [
+      { id: 1, name: 'John Doe', date: '2023-12-15', amount: 5000, status: 'completed' },
+      { id: 2, name: 'Jane Smith', date: '2023-12-14', amount: 3500, status: 'completed' },
+      { id: 3, name: 'Mike Johnson', date: '2023-12-12', amount: 7500, status: 'pending' },
+    ],
+    withdrawalHistory: [
+      { id: 1, amount: 20000, date: '2023-12-10', status: 'completed' },
+      { id: 2, amount: 15000, date: '2023-11-25', status: 'completed' },
+      { id: 3, amount: 10000, date: '2023-11-10', status: 'completed' },
+    ],
+    monthlyStats: [
+      { month: 'Jan', earnings: 12000 },
+      { month: 'Feb', earnings: 15000 },
+      { month: 'Mar', earnings: 18000 },
+      { month: 'Apr', earnings: 22000 },
+      { month: 'May', earnings: 19000 },
+      { month: 'Jun', earnings: 25000 },
+    ]
+  });
+
+  useEffect(() => {
+    // Check if user is an agent
+    const isAgent = localStorage.getItem('isAgent') === 'true';
+    if (!isAgent) {
+      navigate('/agent-signup');
+    }
+  }, [navigate]);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/agent-login');
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Navigation */}
+      <nav className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex">
+              <div className="flex-shrink-0 flex items-center">
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-blue-500 bg-clip-text text-transparent">
+                  SocialBoost Agent
+                </h1>
+              </div>
+              <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+                <button
+                  onClick={() => setActiveTab("overview")}
+                  className={`${
+                    activeTab === "overview"
+                      ? "border-pink-500 text-gray-900"
+                      : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                >
+                  Overview
+                </button>
+                <button
+                  onClick={() => setActiveTab("referrals")}
+                  className={`${
+                    activeTab === "referrals"
+                      ? "border-pink-500 text-gray-900"
+                      : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                >
+                  Referrals
+                </button>
+                <button
+                  onClick={() => setActiveTab("withdrawals")}
+                  className={`${
+                    activeTab === "withdrawals"
+                      ? "border-pink-500 text-gray-900"
+                      : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                >
+                  Withdrawals
+                </button>
+              </div>
+            </div>
+
+            {/* User Menu - Desktop */}
+            <div className="hidden sm:flex items-center">
+              <div className="flex items-center space-x-3">
+                <span className="text-sm font-medium text-gray-700">Agent ID: {agentData.id}</span>
+                <button onClick={handleLogout} className="text-sm text-red-600 hover:text-red-500">
+                  Logout
+                </button>
+              </div>
+            </div>
+
+            {/* Mobile menu button */}
+            <div className="flex items-center sm:hidden">
+              <button
+                onClick={toggleMobileMenu}
+                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pink-500"
+                aria-expanded="false"
+              >
+                <span className="sr-only">Open main menu</span>
+                {isMobileMenuOpen ? (
+                  <X className="block h-6 w-6" aria-hidden="true" />
+                ) : (
+                  <Menu className="block h-6 w-6" aria-hidden="true" />
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile menu */}
+        <div className={`sm:hidden ${isMobileMenuOpen ? "block" : "hidden"}`}>
+          <div className="pt-2 pb-3 space-y-1">
+            <button
+              onClick={() => {
+                setActiveTab("overview");
+                setIsMobileMenuOpen(false);
+              }}
+              className={`${
+                activeTab === "overview"
+                  ? "bg-pink-50 border-pink-500 text-pink-700"
+                  : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800"
+              } block pl-3 pr-4 py-2 border-l-4 text-base font-medium w-full text-left`}
+            >
+              Overview
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab("referrals");
+                setIsMobileMenuOpen(false);
+              }}
+              className={`${
+                activeTab === "referrals"
+                  ? "bg-pink-50 border-pink-500 text-pink-700"
+                  : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800"
+              } block pl-3 pr-4 py-2 border-l-4 text-base font-medium w-full text-left`}
+            >
+              Referrals
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab("withdrawals");
+                setIsMobileMenuOpen(false);
+              }}
+              className={`${
+                activeTab === "withdrawals"
+                  ? "bg-pink-50 border-pink-500 text-pink-700"
+                  : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800"
+              } block pl-3 pr-4 py-2 border-l-4 text-base font-medium w-full text-left`}
+            >
+              Withdrawals
+            </button>
+          </div>
+
+          {/* Mobile user menu */}
+          <div className="pt-4 pb-3 border-t border-gray-200">
+            <div className="flex items-center px-4">
+              <div className="flex-shrink-0">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-r from-pink-500 to-blue-500 flex items-center justify-center text-white font-bold">
+                  {user?.username?.charAt(0)?.toUpperCase() || "A"}
+                </div>
+              </div>
+              <div className="ml-3">
+                <div className="text-base font-medium text-gray-800">Agent ID: {agentData.id}</div>
+              </div>
+            </div>
+            <div className="mt-3 space-y-1">
+              <button
+                onClick={handleLogout}
+                className="block px-4 py-2 text-base font-medium text-red-600 hover:text-red-800 hover:bg-gray-100 w-full text-left"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        {activeTab === 'overview' && (
+          <div className="space-y-6">
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <div className="flex items-center">
+                  <div className="p-3 rounded-full bg-pink-100 text-pink-500">
+                    <DollarSign size={24} />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-500">Total Earnings</p>
+                    <h3 className="text-xl font-bold text-gray-900">₦{agentData.totalEarnings.toLocaleString()}</h3>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <div className="flex items-center">
+                  <div className="p-3 rounded-full bg-blue-100 text-blue-500">
+                    <Clock size={24} />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-500">Pending Withdrawals</p>
+                    <h3 className="text-xl font-bold text-gray-900">₦{agentData.pendingWithdrawals.toLocaleString()}</h3>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <div className="flex items-center">
+                  <div className="p-3 rounded-full bg-green-100 text-green-500">
+                    <Users size={24} />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-500">Total Referrals</p>
+                    <h3 className="text-xl font-bold text-gray-900">{agentData.totalReferrals}</h3>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <div className="flex items-center">
+                  <div className="p-3 rounded-full bg-purple-100 text-purple-500">
+                    <TrendingUp size={24} />
+                  </div>
+                  <div className="ml-4">
+                    <p className="text-sm font-medium text-gray-500">Active Referrals</p>
+                    <h3 className="text-xl font-bold text-gray-900">{agentData.activeReferrals}</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Referral ID Card */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-lg font-medium text-gray-900 mb-4">Your Referral ID</h2>
+              <div className="bg-gray-50 p-4 rounded-md flex justify-between items-center">
+                <span className="font-mono text-lg">{agentData.id}</span>
+                <button 
+                  onClick={() => {
+                    navigator.clipboard.writeText(agentData.id);
+                    alert('Referral ID copied to clipboard!');
+                  }}
+                  className="px-4 py-2 bg-pink-500 text-white rounded-md hover:bg-pink-600"
+                >
+                  Copy
+                </button>
+              </div>
+              <p className="mt-2 text-sm text-gray-500">
+                Share this ID with your clients. You'll earn commission on every order they place.
+              </p>
+            </div>
+
+            {/* Recent Activity */}
+            <div className="bg-white rounded-lg shadow-md">
+              <div className="p-6 border-b border-gray-200">
+                <h3 className="text-lg font-medium text-gray-900">Recent Referrals</h3>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Client</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {agentData.recentReferrals.map((referral) => (
+                      <tr key={referral.id}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{referral.name}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{referral.date}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₦{referral.amount.toLocaleString()}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`px-2 py-1 text-xs rounded-full ${
+                            referral.status === 'completed' 
+                              ? 'bg-green-100 text-green-800' 
+                              : 'bg-yellow-100 text-yellow-800'
+                          }`}>
+                            {referral.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'referrals' && (
+          <div className="space-y-6">
+            {/* Referral Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Referral Statistics</h3>
+                <div className="space-y-4">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Total Referrals</span>
+                    <span className="font-medium">{agentData.totalReferrals}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Active Referrals</span>
+                    <span className="font-medium">{agentData.activeReferrals}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Conversion Rate</span>
+                    <span className="font-medium">{Math.round((agentData.activeReferrals / agentData.totalReferrals) * 100)}%</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Average Commission</span>
+                    <span className="font-medium">₦{Math.round(agentData.totalEarnings / agentData.totalReferrals).toLocaleString()}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Referral Link</h3>
+                <div className="bg-gray-50 p-4 rounded-md mb-4">
+                  <p className="font-mono text-sm break-all">https://pxsm.vercel.app/signup?ref={agentData.id}</p>
+                </div>
+                <button 
+                  onClick={() => {
+                    navigator.clipboard.writeText(`https://pxsm.vercel.app/signup?ref=${agentData.id}`);
+                    alert('Referral link copied to clipboard!');
+                  }}
+                  className="w-full px-4 py-2 bg-pink-500 text-white rounded-md hover:bg-pink-600"
+                >
+                  Copy Referral Link
+                </button>
+              </div>
+            </div>
+
+            {/* All Referrals */}
+            <div className="bg-white rounded-lg shadow-md">
+              <div className="p-6 border-b border-gray-200">
+                <h3 className="text-lg font-medium text-gray-900">All Referrals</h3>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Client</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Client</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {agentData.recentReferrals.concat([
+                      { id: 4, name: 'Sarah Williams', date: '2023-12-05', amount: 4200, status: 'completed' },
+                      { id: 5, name: 'David Brown', date: '2023-12-01', amount: 6300, status: 'completed' },
+                      { id: 6, name: 'Emily Davis', date: '2023-11-28', amount: 3800, status: 'completed' },
+                      { id: 7, name: 'Robert Wilson', date: '2023-11-22', amount: 5100, status: 'completed' },
+                    ]).map((referral) => (
+                      <tr key={referral.id}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{referral.name}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{referral.date}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₦{referral.amount.toLocaleString()}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`px-2 py-1 text-xs rounded-full ${
+                            referral.status === 'completed' 
+                              ? 'bg-green-100 text-green-800' 
+                              : 'bg-yellow-100 text-yellow-800'
+                          }`}>
+                            {referral.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'withdrawals' && (
+          <div className="space-y-6">
+            {/* Withdrawal Form */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Request Withdrawal</h3>
+              <form className="space-y-4">
+                <div>
+                  <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
+                    Amount (₦)
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      type="number"
+                      name="amount"
+                      id="amount"
+                      className="shadow-sm focus:ring-pink-500 focus:border-pink-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                      placeholder="Enter amount"
+                      min="5000"
+                      max={agentData.totalEarnings - agentData.pendingWithdrawals}
+                    />
+                  </div>
+                  <p className="mt-1 text-sm text-gray-500">Minimum withdrawal: ₦5,000</p>
+                </div>
+                
+                <div>
+                  <label htmlFor="bank" className="block text-sm font-medium text-gray-700">
+                    Bank
+                  </label>
+                  <div className="mt-1">
+                    <select
+                      id="bank"
+                      name="bank"
+                      className="shadow-sm focus:ring-pink-500 focus:border-pink-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                    >
+                      <option value="">Select your bank</option>
+                      <option value="access">Access Bank</option>
+                      <option value="gtb">GTBank</option>
+                      <option value="first">First Bank</option>
+                      <option value="zenith">Zenith Bank</option>
+                      <option value="uba">UBA</option>
+                      <option value="kuda">Kuda Bank</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div>
+                  <label htmlFor="account" className="block text-sm font-medium text-gray-700">
+                    Account Number
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      type="text"
+                      name="account"
+                      id="account"
+                      className="shadow-sm focus:ring-pink-500 focus:border-pink-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                      placeholder="Enter account number"
+                      maxLength="10"
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => alert('Withdrawal request submitted! It will be processed within 24 hours.')}
+                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-500 hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
+                  >
+                    Request Withdrawal
+                  </button>
+                </div>
+              </form>
+            </div>
+            
+            {/* Withdrawal History */}
+            <div className="bg-white rounded-lg shadow-md">
+              <div className="p-6 border-b border-gray-200">
+                <h3 className="text-lg font-medium text-gray-900">Withdrawal History</h3>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {agentData.withdrawalHistory.concat([
+                      { id: 4, amount: 8000, date: '2023-10-25', status: 'completed' },
+                      { id: 5, amount: 12000, date: '2023-10-10', status: 'completed' },
+                      { id: 6, amount: 18000, date: '2023-09-25', status: 'completed' },
+                    ]).map((withdrawal) => (
+                      <tr key={withdrawal.id}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">#{withdrawal.id}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{withdrawal.date}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₦{withdrawal.amount.toLocaleString()}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`px-2 py-1 text-xs rounded-full ${
+                            withdrawal.status === 'completed' 
+                              ? 'bg-green-100 text-green-800' 
+                              : withdrawal.status === 'pending'
+                                ? 'bg-yellow-100 text-yellow-800'
+                                : 'bg-red-100 text-red-800'
+                          }`}>
+                            {withdrawal.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}

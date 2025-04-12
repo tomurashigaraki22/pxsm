@@ -113,6 +113,9 @@ export default function Login() {
               </Link>
             </div>
           </div>
+          <div className='flex items-center justify-center border-2 border-gray-200 group hover:border-gray-500 cursor-pointer rounded-md w-full py-2 transition-ease duration-300' onClick={() => navigate("/agent-login")}>
+            <p className='text-sm text-gray-900 group-hover:text-gray-400 cursor-pointer transition-ease duration-300'>Agent Login</p>
+          </div>
 
           <div>
             <button

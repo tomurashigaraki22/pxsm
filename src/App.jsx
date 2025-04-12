@@ -7,16 +7,12 @@ import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import NotFound from './pages/NotFound';
 import PaymentCallback from './pages/PaymentCallback';
-import { useEffect } from 'react';
+import AgentSignup from './pages/AgentSignup';
+import AgentLogin from './pages/AgentLogin';
+import AgentDashboard from './pages/AgentDashboard';
+import AgentSubscription from './pages/AgentSubscription';
 
 function App() {
-  // useEffect(() => {
-  //   const as = () => {
-  //     alert("Welcome to social boost")
-  //   }
-
-  //   as();
-  // })
   return (
     <AuthProvider>
       <Router>
@@ -37,6 +33,20 @@ function App() {
               <Signup />
             </PublicRoute>
           } />
+          
+          {/* Agent routes */}
+          <Route path="/agent-signup" element={
+            <PublicRoute>
+              <AgentSignup />
+            </PublicRoute>
+          } />
+          <Route path="/agent-login" element={
+            <PublicRoute>
+              <AgentLogin />
+            </PublicRoute>
+          } />
+          <Route path="/agent-subscription" element={<AgentSubscription />} />
+          <Route path="/agent-dashboard" element={<AgentDashboard />} />
 
           {/* Protected routes */}
           <Route path="/dashboard" element={

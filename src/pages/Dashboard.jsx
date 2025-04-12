@@ -6,11 +6,14 @@ import axios from 'axios';
 import { API_URL } from '../config';
 import { useNavigate } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
+import SEO from '../components/SEO';
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState('wallet');
   const [isPlacingOrder, setisPlacingOrder] = useState(false)
   const [agentId, setagentId] = useState("")
+  const [isValidAgent, setIsValidAgent] = useState(false)
+  const [agentError, setAgentError] = useState('')
   const [isTransactionsLoading, setIsTransactionsLoading] = useState(true)
   const { user, logout } = useAuth();
   const navigate = useNavigate()
@@ -328,6 +331,7 @@ useEffect(() => {
             order_id: `new_order_${Date.now()}`,
             service_name: selectedService.name,
             link: orderLink,
+            agentId: agentId,
             amount: (orderQuantity * (rate / 1000)).toFixed(2),
             status: 'pending'
           })
@@ -347,6 +351,7 @@ useEffect(() => {
           },
           body: JSON.stringify({
             user_id: user.id,
+            agentId: agentId,
             order_id: `new_order_${Date.now()}`,
             service_name: selectedService.name,
             link: orderLink,
@@ -372,6 +377,7 @@ useEffect(() => {
             order_id: `new_order_${Date.now()}`,
             service_name: selectedService.name,
             link: orderLink,
+            agentId: agentId,
             amount: (orderQuantity * (rate / 1000)).toFixed(2),
             status: 'completed'
           })
@@ -394,6 +400,7 @@ useEffect(() => {
             order_id: `new_order_${Date.now()}`,
             service_name: selectedService.name,
             link: orderLink,
+            agentId: agentId,
             amount: (orderQuantity * (rate / 1000)).toFixed(2),
             status: 'completing'
           })
@@ -468,12 +475,51 @@ useEffect(() => {
       setAmount(""); // Reset if input is invalid
     }
   };
+
+  const validateAgentId = async (id) => {
+    if (!id){
+      setIsValidAgent(false);
+      setAgentError("Agent id not sent")
+      return
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/check/${id}`);
+      const data = await response.json()
+
+      if (response.ok && data.exists){
+        setIsValidAgent(true)
+        setAgentError("");
+      } else{
+        setIsValidAgent(false)
+        setAgentError("Invalid agent ID")
+      }
+    } catch (error) {
+      console.log("Error: ", error)
+      setIsValidAgent(false)
+      setAgentError("Error validating agent id")
+    }
+  }
   
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
-      
+      <SEO 
+        title="Dashboard"
+        description="Boost your social media presence with our premium services. Get real followers, likes, and engagement across all major platforms."
+        keywords="social media marketing, followers, likes, engagement, Instagram, Facebook, Twitter, TikTok"/>
+        <motion.div 
+          className="fixed inset-0 -z-10"
+          animate={{
+            background: [
+              'radial-gradient(circle at 0% 0%, rgba(236, 72, 153, 0.1) 0%, transparent 50%)',
+              'radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.1) 0%, transparent 50%)',
+              'radial-gradient(circle at 100% 0%, rgba(236, 72, 153, 0.1) 0%, transparent 50%)',
+            ]
+          }}
+          transition={{ duration: 10, repeat: Infinity }}
+        />
 <nav className="bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
@@ -514,6 +560,8 @@ useEffect(() => {
               >
                 Order History
               </button>
+
+              
             </div>
           </div>
 
@@ -700,9 +748,9 @@ useEffect(() => {
                         <tr key={transaction.id}>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">{transaction.type.toLocaleUpperCase()}</td>
                           <td className={`px-6 py-4 whitespace-nowrap text-sm ${
-                            transaction.amount > 0 ? 'text-green-600' : 'text-red-600'
+                            transaction.type.toLocaleUpperCase() === "CREDIT" ? 'text-green-600' : 'text-red-600'
                           }`}>
-                            {transaction.amount > 0 ? '+' : ''}₦{Number(transaction.amount).toLocaleString()}
+                            {transaction.type.toLocaleUpperCase() === "CREDIT" ? '+' : '-'}₦{Number(transaction.amount).toLocaleString()}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {new Date(transaction.created_at).toLocaleDateString()}
@@ -803,6 +851,27 @@ useEffect(() => {
                   placeholder={`Min: ${selectedService.min} - Max: ${selectedService.max}`}
                 />
               </div>
+
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Agent ID</label>
+                <input
+                  type="text"
+                  value={agentId}
+                  onChange={(e) => setagentId(e.target.value)}
+                  onBlur={(e) => validateAgentId(e.target.value)}
+                  className={`w-full border  ${
+        agentId && (isValidAgent ? 'border-green-500' : 'border-red-500')
+      } rounded-md p-2 focus:ring-pink-500 focus:border-pink-500`}
+                  placeholder="Enter agent referral"
+                />
+                {agentError && (
+                  <p className='mt-1 text-sm text-red-600'>{agentError}</p>
+                )}
+
+                {isValidAgent && (
+                  <p className='mt-1 text-sm text-green-600'>Valid Agent ID</p>
+                )}
+              </div>
   
               <div className="mt-4">
                 <label className="block text-sm font-medium text-gray-700 mb-2">Link</label>
@@ -815,16 +884,7 @@ useEffect(() => {
                 />
               </div>
 
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">Agent ID</label>
-                <input
-                  type="text"
-                  value={agentId}
-                  onChange={(e) => setagentId(e.target.value)}
-                  className="w-full border border-gray-300 rounded-md p-2 focus:ring-pink-500 focus:border-pink-500"
-                  placeholder="Enter agent referral"
-                />
-              </div>
+              
   
               {/* Order Summary */}
               <div className="bg-gray-50 p-4 rounded-md mt-4">
