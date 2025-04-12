@@ -918,8 +918,8 @@ useEffect(() => {
 
               
   
-              {/* Order Summary */}
-              <div className="bg-gray-50 p-4 rounded-md mt-4">
+                            {/* Order Summary */}
+                            <div className="bg-gray-50 p-4 rounded-md mt-4">
                 <h3 className="text-sm font-medium text-gray-700 mb-2">Order Summary</h3>
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
@@ -931,15 +931,25 @@ useEffect(() => {
                     <span>₦{rate} per 1000</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span>Total Cost:</span>
+                    <span>Subtotal:</span>
                     <span>₦{(orderQuantity * (rate / 1000)).toLocaleString(undefined, {minimumFractionDigits:2,maximumFractionDigits:2})}</span>
+                  </div>
+                  {isValidAgent && (
+                    <div className="flex justify-between text-sm text-green-600">
+                      <span>Agent Discount (10%):</span>
+                      <span>-₦{((orderQuantity * (rate / 1000)) * 0.1).toLocaleString(undefined, {minimumFractionDigits:2,maximumFractionDigits:2})}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-sm font-bold pt-2 border-t border-gray-200">
+                    <span>Total Cost:</span>
+                    <span>₦{(orderQuantity * (rate / 1000) * (isValidAgent ? 0.9 : 1)).toLocaleString(undefined, {minimumFractionDigits:2,maximumFractionDigits:2})}</span>
                   </div>
                 </div>
               </div>
   
               <button
                 onClick={() => handlePlaceOrder(selectedService)}
-                disabled={!orderQuantity || !orderLink || isPlacingOrder}
+                disabled={!orderQuantity || !orderLink || isPlacingOrder || isValidatingAgent}
                 className="w-full bg-gradient-to-r from-pink-500 to-blue-500 text-white py-2 rounded-md hover:from-pink-600 hover:to-blue-600 disabled:opacity-50 mt-4"
               >
                 {isPlacingOrder? "Placing Order..." : "Place Order"}
