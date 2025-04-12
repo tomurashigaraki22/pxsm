@@ -14,6 +14,7 @@ export default function Dashboard() {
   const [agentId, setagentId] = useState("")
   const [isValidAgent, setIsValidAgent] = useState(false)
   const [agentError, setAgentError] = useState('')
+  const [isValidatingAgent, setisValidatingAgent] = useState(false)
   const [isTransactionsLoading, setIsTransactionsLoading] = useState(true)
   const { user, logout } = useAuth();
   const navigate = useNavigate()
@@ -1021,9 +1022,3 @@ useEffect(() => {
     </div>
   );
 }
-
-// Add these near your other state declarations
-
-
-// In your main content section, add this condition for order_history tab
-
