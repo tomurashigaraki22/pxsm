@@ -12,6 +12,33 @@ export default function AgentDashboard() {
   const [detailedOrders, setDetailedOrders] = useState([]);
   const navigate = useNavigate();
 
+  const [withdrawalState, setWithdrawalState] = useState({
+    availableBalance: 0,
+    withdrawnOrders: [],
+    withdrawals: []
+  });
+
+  const getWithdrawalDetails = async () => {
+    try {
+      const response = await fetch(`${API_URL}/agent/withdrawal-details/${localStorage.getItem('agentId')}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch withdrawal details');
+      }
+
+      const data = await response.json();
+      console.log("Data: ", data)
+      setWithdrawalState(data);
+    } catch (error) {
+      console.error('Error fetching withdrawal details:', error);
+    }
+  };
+
   const getAgentOrderDetails = async () => {
     try {
       const response = await fetch(`${API_URL}/agent/orders/${localStorage.getItem('agentId')}`, {
@@ -70,6 +97,7 @@ export default function AgentDashboard() {
 
     getRefCount();
     getAgentOrderDetails();
+    getWithdrawalDetails();
   }, [navigate]);
 
   const getRefCount = async () => {
@@ -454,13 +482,13 @@ export default function AgentDashboard() {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 py-1 text-xs rounded-full ${
-                            order.status === 'completed' 
-                              ? 'bg-green-100 text-green-800' 
-                              : order.status === 'pending'
-                                ? 'bg-yellow-100 text-yellow-800'
-                                : 'bg-red-100 text-red-800'
+                            order.is_paid_agent === 'completed' 
+                              ? 'bg-green-100 text-green-800'
+                              : order.is_paid_agent === 'processing'
+                                ? 'bg-blue-100 text-blue-800'
+                                : 'bg-yellow-100 text-yellow-800'
                           }`}>
-                            {order.status}
+                            {order.is_paid_agent === 'completed' ? 'Paid' : order.is_paid_agent === 'processing' ? 'Processing' : 'Pending'}
                           </span>
                         </td>
                       </tr>
@@ -477,25 +505,54 @@ export default function AgentDashboard() {
             {/* Withdrawal Form */}
             <div className="bg-white rounded-lg shadow-md p-6">
               <h3 className="text-lg font-medium text-gray-900 mb-4">Request Withdrawal</h3>
-              <form className="space-y-4">
-                <div>
-                  <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
-                    Amount (₦)
-                  </label>
-                  <div className="mt-1">
-                    <input
-                      type="number"
-                      name="amount"
-                      id="amount"
-                      className="shadow-sm focus:ring-pink-500 focus:border-pink-500 py-1 block w-full sm:text-sm border-gray-300 rounded-md"
-                      placeholder="Enter amount"
-                      min="5000"
-                      max={agentData.totalEarnings - agentData.pendingWithdrawals}
-                    />
-                  </div>
-                  <p className="mt-1 text-sm text-gray-500">Minimum withdrawal: ₦5,000</p>
-                </div>
-                
+              <div className="mb-4 p-4 bg-gray-50 rounded-md">
+                <p className="text-sm text-gray-600">Available Balance</p>
+                <p className="text-2xl font-bold text-gray-900">₦{withdrawalState.availableBalance.toLocaleString()}</p>
+              </div>
+              <form className="space-y-4" onSubmit={async (e) => {
+                e.preventDefault();
+                try {
+                  const pendingOrders = detailedOrders.filter(order => 
+                    order.is_paid_agent === 'pending'
+                  );
+
+                  console.log("Detailed Orders: ", detailedOrders);
+                  console.log("Pending Orders: ", pendingOrders);
+
+                  if (pendingOrders.length === 0) {
+                    alert('No pending orders available for withdrawal');
+                    return;
+                  }
+
+                  const formData = {
+                    agent_id: localStorage.getItem('agentId'),
+                    amount: withdrawalState.availableBalance,
+                    bank_name: e.target.bank.value,
+                    account_number: e.target.account.value,
+                    order_ids: pendingOrders.map(order => order.order_id)
+                  };
+
+                  const response = await fetch(`${API_URL}/agent/withdraw`, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                  });
+
+                  const data = await response.json();
+                  
+                  if (data.status === 'success') {
+                    alert('Withdrawal request submitted successfully!');
+                    getWithdrawalDetails(); // Refresh withdrawal data
+                    getAgentOrderDetails(); // Refresh order details
+                  } else {
+                    throw new Error(data.message);
+                  }
+                } catch (error) {
+                  alert(error.message || 'Failed to submit withdrawal request');
+                }
+              }}>
                 <div>
                   <label htmlFor="bank" className="block text-sm font-medium text-gray-700">
                     Bank
@@ -504,6 +561,7 @@ export default function AgentDashboard() {
                     <select
                       id="bank"
                       name="bank"
+                      required
                       className="py-1 shadow-sm focus:ring-pink-500 focus:border-pink-500 block w-full sm:text-sm border-gray-300 rounded-md"
                     >
                       <option value="">Select your bank</option>
@@ -526,26 +584,42 @@ export default function AgentDashboard() {
                       type="text"
                       name="account"
                       id="account"
+                      required
                       className="py-1 shadow-sm focus:ring-pink-500 focus:border-pink-500 block w-full sm:text-sm border-gray-300 rounded-md"
                       placeholder="Enter account number"
                       maxLength="10"
+                      pattern="[0-9]{10}"
                     />
+                  </div>
+                </div>
+
+                <div className="mt-4">
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">Orders Included in Withdrawal</h4>
+                  <div className="bg-gray-50 p-4 rounded-md max-h-40 overflow-y-auto">
+                    {detailedOrders
+                      .filter(order => order.is_paid_agent === 'pending')
+                      .map(order => (
+                        <div key={order.order_id} className="flex justify-between py-1 text-sm">
+                          <span className="text-gray-600">Order #{order.order_id.split("_")[2]}</span>
+                          <span className="text-gray-900">₦{((parseInt(order.commission) * order.amount)/100).toLocaleString()}</span>
+                        </div>
+                      ))
+                    }
                   </div>
                 </div>
                 
                 <div>
                   <button
-                    type="button"
-                    onClick={() => alert('Withdrawal request submitted! It will be processed within 24 hours.')}
-                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-500 hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500"
+                    type="submit"
+                    disabled={withdrawalState.availableBalance <= 0}
+                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-500 hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
                   >
-                    Request Withdrawal
+                    {withdrawalState.availableBalance <= 0 ? 'No Funds Available' : 'Request Withdrawal'}
                   </button>
                 </div>
               </form>
             </div>
             
-            {/* Withdrawal History */}
             <div className="bg-white rounded-lg shadow-md">
               <div className="p-6 border-b border-gray-200">
                 <h3 className="text-lg font-medium text-gray-900">Withdrawal History</h3>
@@ -554,21 +628,19 @@ export default function AgentDashboard() {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Reference</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {agentData.withdrawalHistory.concat([
-                      { id: 4, amount: 8000, date: '2023-10-25', status: 'completed' },
-                      { id: 5, amount: 12000, date: '2023-10-10', status: 'completed' },
-                      { id: 6, amount: 18000, date: '2023-09-25', status: 'completed' },
-                    ]).map((withdrawal) => (
+                    {withdrawalState.withdrawals.map((withdrawal) => (
                       <tr key={withdrawal.id}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">#{withdrawal.id}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{withdrawal.date}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{withdrawal.transaction_reference}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {new Date(withdrawal.created_at).toLocaleDateString()}
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₦{withdrawal.amount.toLocaleString()}</td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 py-1 text-xs rounded-full ${
@@ -576,7 +648,9 @@ export default function AgentDashboard() {
                               ? 'bg-green-100 text-green-800' 
                               : withdrawal.status === 'pending'
                                 ? 'bg-yellow-100 text-yellow-800'
-                                : 'bg-red-100 text-red-800'
+                                : withdrawal.status === 'processing'
+                                  ? 'bg-blue-100 text-blue-800'
+                                  : 'bg-red-100 text-red-800'
                           }`}>
                             {withdrawal.status}
                           </span>
