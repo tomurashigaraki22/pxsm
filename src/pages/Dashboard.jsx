@@ -245,7 +245,7 @@ useEffect(() => {
           console.log(`An error occured: ${m.error}`)
           if (m.error === "insufficient_funds"){
             alert(`Insufficient funds on API, Contact Website Admin`)
-            console.log("AMOUNT: ", ((orderQuantity * (rate / 1000) * (isValidAgent ? 0.9 : 1)).toFixed(2)))
+            console.log("AMOUNT: ", ((orderQuantity * (rate / 1000) * (isValidAgent ? 0.95 : 1)).toFixed(2)))
             console.log("")
             const response = await fetch(`${API_URL}/orders/create`, {
               method: 'POST',
@@ -257,7 +257,7 @@ useEffect(() => {
                 order_id: `new_order_${Date.now()}`,
                 service_name: selectedService.name,
                 link: orderLink,
-                amount: (orderQuantity * (rate / 1000) * (isValidAgent ? 0.9 : 1)).toFixed(2),
+                amount: (orderQuantity * (rate / 1000) * (isValidAgent ? 0.95 : 1)).toFixed(2),
                 status: 'cancelled'
               })
             })
@@ -287,7 +287,7 @@ useEffect(() => {
             order_id: `new_order_${Date.now()}`,
             service_name: selectedService.name,
             link: orderLink,
-            amount: (orderQuantity * (rate / 1000) * (isValidAgent ? 0.9 : 1)).toFixed(2),
+            amount: (orderQuantity * (rate / 1000) * (isValidAgent ? 0.95 : 1)).toFixed(2),
             status: 'cancelled'
           })
         })
@@ -333,7 +333,7 @@ useEffect(() => {
             service_name: selectedService.name,
             link: orderLink,
             agentId: agentId,
-            amount: (orderQuantity * (rate / 1000) * (isValidAgent ? 0.9 : 1)).toFixed(2),
+            amount: (orderQuantity * (rate / 1000) * (isValidAgent ? 0.95 : 1)).toFixed(2),
             status: 'pending'
           })
         })
@@ -356,7 +356,7 @@ useEffect(() => {
             order_id: `new_order_${Date.now()}`,
             service_name: selectedService.name,
             link: orderLink,
-            amount: (orderQuantity * (rate / 1000) * (isValidAgent ? 0.9 : 1)).toFixed(2),
+            amount: (orderQuantity * (rate / 1000) * (isValidAgent ? 0.95 : 1)).toFixed(2),
             status: 'completing'
           })
         })
@@ -379,7 +379,7 @@ useEffect(() => {
             service_name: selectedService.name,
             link: orderLink,
             agentId: agentId,
-            amount: (orderQuantity * (rate / 1000) * (isValidAgent ? 0.9 : 1)).toFixed(2),
+            amount: (orderQuantity * (rate / 1000) * (isValidAgent ? 0.95 : 1)).toFixed(2),
             status: 'completed'
           })
         })
@@ -402,7 +402,7 @@ useEffect(() => {
             service_name: selectedService.name,
             link: orderLink,
             agentId: agentId,
-            amount: (orderQuantity * (rate / 1000) * (isValidAgent ? 0.9 : 1)).toFixed(2),
+            amount: (orderQuantity * (rate / 1000) * (isValidAgent ? 0.95 : 1)).toFixed(2),
             status: 'completing'
           })
         })
@@ -424,7 +424,7 @@ useEffect(() => {
             order_id: `new_order_${Date.now()}`,
             service_name: selectedService.name,
             link: orderLink,
-            amount: (orderQuantity * (rate / 1000) * (isValidAgent ? 0.9 : 1)).toFixed(2),
+            amount: (orderQuantity * (rate / 1000) * (isValidAgent ? 0.95 : 1)).toFixed(2),
             status: 'cancelled'
           })
         })
@@ -451,7 +451,7 @@ useEffect(() => {
           order_id: `new_order_${Date.now()}`,
           service_name: selectedService.name,
           link: orderLink,
-          amount: (orderQuantity * (rate / 1000) * (isValidAgent ? 0.9 : 1)).toFixed(2),
+          amount: (orderQuantity * (rate / 1000) * (isValidAgent ? 0.95 : 1)).toFixed(2),
           status: 'cancelled'
         })
       })
@@ -928,13 +928,13 @@ useEffect(() => {
                   </div>
                   {isValidAgent && (
                     <div className="flex justify-between text-sm text-green-600">
-                      <span>Agent Discount (10%):</span>
-                      <span>-₦{((orderQuantity * (rate / 1000)) * 0.1).toLocaleString(undefined, {minimumFractionDigits:2,maximumFractionDigits:2})}</span>
+                      <span>Agent Discount (5%):</span>
+                      <span>-₦{((orderQuantity * (rate / 1000)) * 0.05).toLocaleString(undefined, {minimumFractionDigits:2,maximumFractionDigits:2})}</span>
                     </div>
                   )}
                   <div className="flex justify-between text-sm font-bold pt-2 border-t border-gray-200">
                     <span>Total Cost:</span>
-                    <span>₦{(orderQuantity * (rate / 1000) * (isValidAgent ? 0.9 : 1)).toLocaleString(undefined, {minimumFractionDigits:2,maximumFractionDigits:2})}</span>
+                    <span>₦{(orderQuantity * (rate / 1000) * (isValidAgent ? 0.95 : 1)).toLocaleString(undefined, {minimumFractionDigits:2,maximumFractionDigits:2})}</span>
                   </div>
                 </div>
               </div>

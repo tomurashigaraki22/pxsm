@@ -275,7 +275,7 @@ export default function AgentSubscription() {
                 <div className="flex items-center">
                   <Banknote className="h-5 w-5 text-green-500 mr-2" />
                   <span className="text-gray-700">
-                    {selectedPlan === 'monthly' ? '10% commission rate' : '15% commission rate'}
+                    {selectedPlan === 'monthly' ? '10% commission rate' : '10% commission rate'}
                   </span>
                 </div>
                 <div className="flex items-center">

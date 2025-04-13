@@ -120,7 +120,7 @@ export default function AgentDashboard() {
       
       // Calculate total earnings (5% of each order)
       const totalEarnings = data.orders.reduce((total, order) => {
-        const commission = order.amount * 0.04; // 5% commission
+        const commission = order.amount * 0.1; // 5% commission
         return total + commission;
       }, 0);
 
@@ -129,7 +129,7 @@ export default function AgentDashboard() {
       // Add commission to each order
       const ordersWithCommission = data.orders.map(order => ({
         ...order,
-        commission: (order.amount * 0.05).toFixed(2) // 5% commission rounded to 2 decimal places
+        commission: (order.amount * 0.1).toFixed(2) // 5% commission rounded to 2 decimal places
       }));
 
       console.log("Orders with Commission: ", ordersWithCommission)
