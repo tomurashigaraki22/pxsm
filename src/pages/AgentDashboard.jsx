@@ -1,26 +1,51 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Menu, X, DollarSign, Users, TrendingUp, Clock } from 'lucide-react';
+import { Menu, X, DollarSign, Users, TrendingUp, Clock, Banknote } from 'lucide-react';
+import { API_URL } from '../config';
 
 export default function AgentDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, logout } = useAuth();
+  const [referralCount, setReferralCount] = useState(0); 
+  const [detailedOrders, setDetailedOrders] = useState([]);
   const navigate = useNavigate();
+
+  const getAgentOrderDetails = async () => {
+    try {
+      const response = await fetch(`${API_URL}/agent/orders/${localStorage.getItem('agentId')}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch order details');
+      }
+
+      const data = await response.json();
+      setDetailedOrders(data.orders);
+    } catch (error) {
+      console.error('Error fetching order details:', error);
+    }
+  };
+
+  
   
   // Dummy data for the agent dashboard
   const [agentData, setAgentData] = useState({
     id: localStorage.getItem('agentId') || 'AG12345',
-    totalEarnings: 125000,
+    totalEarnings: '...',
     pendingWithdrawals: 15000,
-    totalReferrals: 28,
-    activeReferrals: 12,
+    totalReferrals: '...',
+    activeReferrals: '...',
     recentReferrals: [
-      { id: 1, name: 'John Doe', date: '2023-12-15', amount: 5000, status: 'completed' },
-      { id: 2, name: 'Jane Smith', date: '2023-12-14', amount: 3500, status: 'completed' },
-      { id: 3, name: 'Mike Johnson', date: '2023-12-12', amount: 7500, status: 'pending' },
-    ],
+      { id: 1, name: 'John Doe', date: '2023-12-15', amount: 5000, status: 'completed', commission: 200 },
+      { id: 2, name: 'Jane Smith', date: '2023-12-14', amount: 3500, status: 'completed', commission: 140 },
+      { id: 3, name: 'Mike Johnson', date: '2023-12-12', amount: 7500, status: 'pending', commission: 300 },
+    ],  
     withdrawalHistory: [
       { id: 1, amount: 20000, date: '2023-12-10', status: 'completed' },
       { id: 2, amount: 15000, date: '2023-11-25', status: 'completed' },
@@ -42,7 +67,63 @@ export default function AgentDashboard() {
     if (!isAgent) {
       navigate('/agent-signup');
     }
+
+    getRefCount();
+    getAgentOrderDetails();
   }, [navigate]);
+
+  const getRefCount = async () => {
+    try {
+      const response = await fetch(`${API_URL}/agent/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          agent_id: localStorage.getItem('agentId'),
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to fetch referral count');
+      }
+  
+      const data = await response.json();
+      
+      // Calculate total earnings (5% of each order)
+      const totalEarnings = data.orders.reduce((total, order) => {
+        const commission = order.amount * 0.04; // 5% commission
+        return total + commission;
+      }, 0);
+
+      console.log("Total Earnings: ", totalEarnings)
+
+      // Add commission to each order
+      const ordersWithCommission = data.orders.map(order => ({
+        ...order,
+        commission: (order.amount * 0.05).toFixed(2) // 5% commission rounded to 2 decimal places
+      }));
+
+      console.log("Orders with Commission: ", ordersWithCommission)
+  
+      setAgentData((prev) => ({
+        ...prev,
+        totalEarnings: totalEarnings,
+        totalReferrals: data.total_orders,
+        activeReferrals: data.total_orders,
+        recentReferrals: ordersWithCommission.map(order => ({
+          id: order.order_id,
+          date: order.date.split(' ')[0], // Get just the date part
+          amount: parseFloat(order.amount),
+          commission: parseFloat(order.commission),
+          status: 'completed'
+        }))
+      }));
+    } catch (error) {
+      console.error('Error fetching referral count:', error);
+    }
+  };
+  
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -204,23 +285,11 @@ export default function AgentDashboard() {
               <div className="bg-white rounded-lg shadow-md p-6">
                 <div className="flex items-center">
                   <div className="p-3 rounded-full bg-pink-100 text-pink-500">
-                    <DollarSign size={24} />
+                    <Banknote size={24} />
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-500">Total Earnings</p>
-                    <h3 className="text-xl font-bold text-gray-900">₦{agentData.totalEarnings.toLocaleString()}</h3>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-white rounded-lg shadow-md p-6">
-                <div className="flex items-center">
-                  <div className="p-3 rounded-full bg-blue-100 text-blue-500">
-                    <Clock size={24} />
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-500">Pending Withdrawals</p>
-                    <h3 className="text-xl font-bold text-gray-900">₦{agentData.pendingWithdrawals.toLocaleString()}</h3>
+                    <h3 className="text-xl font-bold text-gray-900">₦{agentData.totalEarnings.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits:2})}</h3>
                   </div>
                 </div>
               </div>
@@ -279,18 +348,18 @@ export default function AgentDashboard() {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Client</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order Amount</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Commission</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {agentData.recentReferrals.map((referral) => (
                       <tr key={referral.id}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{referral.name}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{referral.date}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₦{referral.amount.toLocaleString()}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">₦{referral.commission.toLocaleString()}</td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 py-1 text-xs rounded-full ${
                             referral.status === 'completed' 
@@ -336,24 +405,24 @@ export default function AgentDashboard() {
               </div>
 
               <div className="bg-white rounded-lg shadow-md p-6">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Referral Link</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Referral ID</h3>
                 <div className="bg-gray-50 p-4 rounded-md mb-4">
-                  <p className="font-mono text-sm break-all">https://pxsm.vercel.app/signup?ref={agentData.id}</p>
+                  <p className="font-mono text-sm break-all">{agentData.id}</p>
                 </div>
                 <button 
                   onClick={() => {
-                    navigator.clipboard.writeText(`https://pxsm.vercel.app/signup?ref=${agentData.id}`);
-                    alert('Referral link copied to clipboard!');
+                    navigator.clipboard.writeText(`${agentData.id}`);
+                    alert('Referral ID copied to clipboard!');
                   }}
                   className="w-full px-4 py-2 bg-pink-500 text-white rounded-md hover:bg-pink-600"
                 >
-                  Copy Referral Link
+                  Copy Referral ID
                 </button>
               </div>
             </div>
 
-            {/* All Referrals */}
-            <div className="bg-white rounded-lg shadow-md">
+                        {/* All Referrals */}
+                        <div className="bg-white rounded-lg shadow-md">
               <div className="p-6 border-b border-gray-200">
                 <h3 className="text-lg font-medium text-gray-900">All Referrals</h3>
               </div>
@@ -361,31 +430,37 @@ export default function AgentDashboard() {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Client</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Client</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Service</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Commission</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {agentData.recentReferrals.concat([
-                      { id: 4, name: 'Sarah Williams', date: '2023-12-05', amount: 4200, status: 'completed' },
-                      { id: 5, name: 'David Brown', date: '2023-12-01', amount: 6300, status: 'completed' },
-                      { id: 6, name: 'Emily Davis', date: '2023-11-28', amount: 3800, status: 'completed' },
-                      { id: 7, name: 'Robert Wilson', date: '2023-11-22', amount: 5100, status: 'completed' },
-                    ]).map((referral) => (
-                      <tr key={referral.id}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{referral.name}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{referral.date}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₦{referral.amount.toLocaleString()}</td>
+                    {detailedOrders.map((order) => (
+                      <tr key={order.id}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{order.order_id}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{order.customer_name}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{order.service_name}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">₦{order.amount.toLocaleString()}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-green-600">
+                          ₦{((parseInt(order.commission) * order.amount)/100).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} ({order.commission.toLocaleString()}%)
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {new Date(order.created_at).toLocaleDateString()}
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`px-2 py-1 text-xs rounded-full ${
-                            referral.status === 'completed' 
+                            order.status === 'completed' 
                               ? 'bg-green-100 text-green-800' 
-                              : 'bg-yellow-100 text-yellow-800'
+                              : order.status === 'pending'
+                                ? 'bg-yellow-100 text-yellow-800'
+                                : 'bg-red-100 text-red-800'
                           }`}>
-                            {referral.status}
+                            {order.status}
                           </span>
                         </td>
                       </tr>
@@ -412,7 +487,7 @@ export default function AgentDashboard() {
                       type="number"
                       name="amount"
                       id="amount"
-                      className="shadow-sm focus:ring-pink-500 focus:border-pink-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                      className="shadow-sm focus:ring-pink-500 focus:border-pink-500 py-1 block w-full sm:text-sm border-gray-300 rounded-md"
                       placeholder="Enter amount"
                       min="5000"
                       max={agentData.totalEarnings - agentData.pendingWithdrawals}
@@ -429,7 +504,7 @@ export default function AgentDashboard() {
                     <select
                       id="bank"
                       name="bank"
-                      className="shadow-sm focus:ring-pink-500 focus:border-pink-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                      className="py-1 shadow-sm focus:ring-pink-500 focus:border-pink-500 block w-full sm:text-sm border-gray-300 rounded-md"
                     >
                       <option value="">Select your bank</option>
                       <option value="access">Access Bank</option>
@@ -451,7 +526,7 @@ export default function AgentDashboard() {
                       type="text"
                       name="account"
                       id="account"
-                      className="shadow-sm focus:ring-pink-500 focus:border-pink-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                      className="py-1 shadow-sm focus:ring-pink-500 focus:border-pink-500 block w-full sm:text-sm border-gray-300 rounded-md"
                       placeholder="Enter account number"
                       maxLength="10"
                     />
