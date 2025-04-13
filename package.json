@@ -21,6 +21,7 @@
     "react-paystack": "^6.0.0",
     "react-router-dom": "^7.2.0",
     "react-squadpay": "^1.0.9",
+    "recharts": "^2.15.2",
     "vite-plugin-html": "^3.2.2",
     "vite-plugin-pages": "^0.33.0",
     "vite-plugin-sitemap": "^0.7.1",

@@ -11,6 +11,7 @@ import AgentSignup from './pages/AgentSignup';
 import AgentLogin from './pages/AgentLogin';
 import AgentDashboard from './pages/AgentDashboard';
 import AgentSubscription from './pages/AgentSubscription';
+import AdminPanel from './pages/AdminPanel';
 
 function App() {
   return (
@@ -63,6 +64,7 @@ function App() {
 
           {/* 404 route */}
           <Route path="*" element={<NotFound />} />
+          <Route path="/admin-panel" element={<AdminPanel />} />
         </Routes>
       </Router>
     </AuthProvider>
