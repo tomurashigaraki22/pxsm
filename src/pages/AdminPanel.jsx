@@ -7,6 +7,7 @@ export default function AdminPanel() {
   const [password, setPassword] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedWithdrawal, setSelectedWithdrawal] = useState(null);
+  const [smmBal, setSmmBal] = useState(0);
 const [showInfoModal, setShowInfoModal] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
   // Add bank info state
@@ -54,6 +55,22 @@ const [showInfoModal, setShowInfoModal] = useState(false);
       console.error('Error fetching data:', error);
     }
   };
+
+  useEffect(() => {
+    console.log("main")
+    const fetchServices = async () => {
+      try {
+        const response = await fetch(`/api/proxy?action=balance`);
+        const data = await response.json();
+        console.log("darta: ", data)
+        setSmmBal(data.balance);
+      } catch (error) {
+        console.error('Failed to fetch services:', error);
+      }
+    };
+  
+    fetchServices();
+  }, []);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -222,6 +239,28 @@ const [showInfoModal, setShowInfoModal] = useState(false);
                 </LineChart>
                 </ResponsiveContainer>
               </div>
+
+              <div className="bg-white p-6 rounded-lg shadow mb-6">
+        <h3 className="text-lg font-medium mb-4">SMM API Payment Details</h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-sm text-gray-500">Bank Name</p>
+            <p className="text-lg font-medium">{bankInfo.bankName}</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500">Account Number</p>
+            <p className="text-lg font-medium">{bankInfo.accountNumber}</p>
+          </div>
+          <div>
+            <p className='text-sm text-gray-500'>Account Name</p>
+            <p className="text-lg font-medium">{bankInfo.accountName}</p>
+          </div>
+          <div>
+            <p className='text-sm text-gray-500'>Balance</p>
+            <p className='text-lg font-medium'>{smmBal}</p>
+          </div>
+        </div>
+      </div>
             </div>
           </div>
         )}
