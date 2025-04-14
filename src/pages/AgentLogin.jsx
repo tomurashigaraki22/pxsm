@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { API_URL } from '../config';
+import { EyeIcon, EyeOff } from 'lucide-react';
 
 export default function AgentLogin() {
   const [agentId, setAgentId] = useState('');
   const [password, setPassword] = useState('');
+  const [eyeOpen, seteyeOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -110,18 +112,18 @@ export default function AgentLogin() {
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
               </label>
-              <div className="mt-1">
+              <div className="mt-1 flex flex-row items-center justify-between appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"              >
                 <input
                   id="password"
                   name="password"
-                  type="password"
+                  type={eyeOpen? 'text' : 'password'}
                   autoComplete="current-password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
                   placeholder="Enter your password"
                 />
+                {eyeOpen ? (<EyeOff color='black' onClick={() => seteyeOpen(!eyeOpen)}/>) : (<EyeIcon color='black' onClick={() => seteyeOpen(!eyeOpen)}/>)}
               </div>
             </div>
 
