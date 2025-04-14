@@ -109,7 +109,7 @@ export default function AgentSubscription() {
     reference: `sub_${Date.now()}`,
     email: email || '',
     amount: selectedPlan === 'monthly' ? 500000 : 4800000, // Amount in kobo
-    publicKey: "pk_live_94b1b6a1ffee3d5512a11b27b768e49216892479",
+    publicKey: "pk_test_aa75f665e51af7dd84de924db2bf1c5c1b3bac48",
     metadata: {
       agent_id: localStorage.getItem('agentId'),
       plan_type: selectedPlan,
