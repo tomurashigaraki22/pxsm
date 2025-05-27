@@ -832,6 +832,78 @@ useEffect(() => {
             </select>
           </div>
            )}
+
+           {selectedPlatform && selectedService && (
+            <div className="bg-white border-2 border-pink-200 rounded-lg p-6 shadow-sm max-w-3xl mx-auto my-6">
+            <div className="space-y-6">
+              {/* Header */}
+              <div className="border-b border-pink-100 pb-4">
+                <h2 className="text-xl font-bold text-gray-900">SERVICE DETAILS (PLEASE READ)</h2>
+              </div>
+      
+              {/* Instagram Settings Warning */}
+              <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+                <div className="flex">
+                  <div className="flex-shrink-0">
+                    <span className="text-2xl">🚨</span>
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-lg font-medium text-yellow-800">READ THIS BEFORE YOU ORDER ANY INSTAGRAM FOLLOWER SERVICE</h3>
+                    <div className="mt-2 text-yellow-700">
+                      <p className="mb-2">Please make the below changes on your Instagram account settings to ensure that Followers ordered are delivered directly to your account. This is because Instagram has automatically turned on "Follower Flagging" for all accounts.</p>
+                      <ol className="list-decimal list-inside space-y-1 ml-2">
+                        <li>Go to your Account Settings</li>
+                        <li>Scroll and locate "Follow & Invite Friends"</li>
+                        <li>Locate the "Flag for Review" option and make sure it is UNCHECKED</li>
+                        <li>Then you can come back to place order for followers</li>
+                      </ol>
+                    </div>
+                  </div>
+                </div>
+              </div>
+      
+              {/* Cheap Services Warning */}
+              <div className="bg-red-50 border-l-4 border-red-400 p-4">
+                <h3 className="text-lg font-medium text-red-800 mb-2">❌ Services Under The "Cheap" Category Have No Quality or Refill Guarantees</h3>
+                <ul className="list-disc list-inside space-y-2 text-red-700">
+                  <li>Cheap services can Unfollow/Drop/Reduce at any time. You may lose some or all your Followers/Engagement. Please be advised.</li>
+                  <li>Cheap services are not stable. Your order can get stuck.</li>
+                  <li>Please do not ask for a refill or refund if you order Cheap services.</li>
+                </ul>
+              </div>
+      
+              {/* Recommended Services */}
+              <div className="bg-green-50 border-l-4 border-green-400 p-4">
+                <h3 className="text-lg font-medium text-green-800 mb-2">✅ Recommended Services</h3>
+                <ul className="list-disc list-inside space-y-2 text-green-700">
+                  <li>Use our [Normal Quality] & [Best Quality] Categories for the best service experience and a Refill Guarantee if your Followers or Engagement ever Reduces/Drops.</li>
+                  <li>Don't use Cheap category services and Normal/Best Quality services on the same link. The link won't get a Refill Guarantee.</li>
+                </ul>
+              </div>
+      
+              {/* Link Format */}
+              <div className="bg-blue-50 border-l-4 border-blue-400 p-4">
+                <h3 className="text-lg font-medium text-blue-800 mb-2">✅ Link Format & Start Time</h3>
+                <div className="space-y-2 text-blue-700">
+                  <p>LINK FORMAT: <code className="bg-blue-100 px-2 py-1 rounded">https://instagram.com/yourpageusername</code></p>
+                  <p>For Example: <code className="bg-blue-100 px-2 py-1 rounded">https://instagram.com/sizzle_nigeria</code></p>
+                  <p>START TIME: 1 - 24 Hours</p>
+                </div>
+              </div>
+      
+              {/* Don'ts */}
+              <div className="bg-red-50 border-l-4 border-red-400 p-4">
+                <h3 className="text-lg font-medium text-red-800 mb-2">PLEASE DON'T DO THE FOLLOWING:</h3>
+                <ul className="list-none space-y-2 text-red-700">
+                  <li>❌ DON'T CHANGE YOUR USERNAME while followers are still delivering on your page</li>
+                  <li>❌ DON'T SEND FOLLOWERS TO A PRIVATE PAGE. Make sure you make the page Public before sending followers.</li>
+                  <li>❌ DON'T ORDER FOLLOWERS FOR THE SAME PAGE TWICE. ENSURE THE FIRST ORDER HAS BEEN COMPLETED BEFORE PLACING ANOTHER FOR THE SAME PAGE ELSE It will lead to incomplete delivery which we won't refund.</li>
+                  <li>❌ DON'T USE AN INVITE LINK. Please use only the Link Format stated above.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+           )}
   
           {selectedService && (
             <>
