@@ -12,6 +12,7 @@ import AgentLogin from './pages/AgentLogin';
 import AgentDashboard from './pages/AgentDashboard';
 import AgentSubscription from './pages/AgentSubscription';
 import AdminPanel from './pages/AdminPanel';
+import OrderDetails from './pages/OrderDetails';
 
 function App() {
   return (
@@ -55,6 +56,8 @@ function App() {
               <Dashboard />
             </ProtectedRoute>
           } />
+
+          <Route path='/order-details' element={<OrderDetails />} />
 
           <Route path="/payment-callback" element={
             <ProtectedRoute>

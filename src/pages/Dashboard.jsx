@@ -329,7 +329,7 @@ useEffect(() => {
           },
           body: JSON.stringify({
             user_id: user.id,
-            order_id: `new_order_${Date.now()}`,
+            order_id: orderNum,
             service_name: selectedService.name,
             link: orderLink,
             agentId: agentId,
@@ -353,7 +353,7 @@ useEffect(() => {
           body: JSON.stringify({
             user_id: user.id,
             agentId: agentId,
-            order_id: `new_order_${Date.now()}`,
+            order_id: orderNum,
             service_name: selectedService.name,
             link: orderLink,
             amount: (orderQuantity * (rate / 1000) * (isValidAgent ? 0.95 : 1)).toFixed(2),
@@ -375,7 +375,7 @@ useEffect(() => {
           },
           body: JSON.stringify({
             user_id: user.id,
-            order_id: `new_order_${Date.now()}`,
+            order_id: orderNum,
             service_name: selectedService.name,
             link: orderLink,
             agentId: agentId,
@@ -398,7 +398,7 @@ useEffect(() => {
           },
           body: JSON.stringify({
             user_id: user.id,
-            order_id: `new_order_${Date.now()}`,
+            order_id: orderNum,
             service_name: selectedService.name,
             link: orderLink,
             agentId: agentId,
@@ -421,7 +421,7 @@ useEffect(() => {
           },
           body: JSON.stringify({
             user_id: user.id,
-            order_id: `new_order_${Date.now()}`,
+            order_id: orderNum,
             service_name: selectedService.name,
             link: orderLink,
             amount: (orderQuantity * (rate / 1000) * (isValidAgent ? 0.95 : 1)).toFixed(2),
@@ -448,7 +448,7 @@ useEffect(() => {
         },
         body: JSON.stringify({
           user_id: user.id,
-          order_id: `new_order_${Date.now()}`,
+          order_id: orderNum,
           service_name: selectedService.name,
           link: orderLink,
           amount: (orderQuantity * (rate / 1000) * (isValidAgent ? 0.95 : 1)).toFixed(2),
@@ -886,7 +886,7 @@ useEffect(() => {
                 <h3 className="text-lg font-medium text-blue-800 mb-2">✅ Link Format & Start Time</h3>
                 <div className="space-y-2 text-blue-700">
                   <p>LINK FORMAT: <code className="bg-blue-100 px-2 py-1 rounded">https://instagram.com/yourpageusername</code></p>
-                  <p>For Example: <code className="bg-blue-100 px-2 py-1 rounded">https://instagram.com/sizzle_nigeria</code></p>
+                  <p>For Example: <code className="bg-blue-100 px-2 py-1 rounded">https://instagram.com/devtomiwa</code></p>
                   <p>START TIME: 1 - 24 Hours</p>
                 </div>
               </div>
@@ -1047,7 +1047,7 @@ useEffect(() => {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Service</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Link</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order Details</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
                       </tr>
                     </thead>
@@ -1066,17 +1066,12 @@ useEffect(() => {
                             ₦{order.amount.toLocaleString()}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`px-2 py-1 text-xs rounded-full ${
-                              order.status === 'Completed' 
-                                ? 'bg-green-100 text-green-800'
-                                : order.status === 'Pending'
-                                ? 'bg-yellow-100 text-yellow-800'
-                                : order.status === 'Failed'
-                                ? 'bg-red-100 text-red-800'
-                                : 'bg-gray-100 text-gray-800'
-                            }`}>
-                              {order.status}
-                            </span>
+                            <button
+                            onClick={() => navigate("/order-details", { state: { orderData: order } })}
+                              className="px-4 py-2 text-sm font-medium text-blue-700 bg-blue-50 rounded-md hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200"
+                            >
+                              View Details
+                            </button>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             {new Date(order.created_at).toLocaleDateString()}
