@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
+import html2pdf from 'html2pdf.js';
 
 export default function OrderDetails() {
   const location = useLocation();
   const [status, setStatus] = useState("fetching status")
+  const contentRef = useRef(null);
   const orderData = location.state?.orderData || {
     orderId: "-",
     createdAt: "-",
@@ -65,9 +67,22 @@ export default function OrderDetails() {
     }
   }, [orderData])
 
+  const handleDownloadPDF = () => {
+    const content = contentRef.current;
+    const options = {
+      filename: `invoice-${orderData.order_id || 'unknown'}.pdf`,
+      margin: 1,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    html2pdf().set(options).from(content).save();
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+      <div ref={contentRef} className="bg-white rounded-lg shadow-sm border border-gray-200">
         {/* Header */}
         <div className="border-b border-gray-200 p-6">
           <div className="flex justify-between items-center">
@@ -131,10 +146,9 @@ export default function OrderDetails() {
 
           {/* Action Buttons */}
           <div className="flex gap-4 pt-4">
-            <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-              Contact Support
-            </button>
-            <button className="border border-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+            <button 
+              onClick={handleDownloadPDF}
+              className="border border-gray-300 bg-blue-200 ease duration-300 3s text-gray-700 px-6 py-2 rounded-lg hover:bg-blue-400 transition-colors">
               Download Invoice
             </button>
           </div>
