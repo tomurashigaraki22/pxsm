@@ -228,7 +228,7 @@ useEffect(() => {
   
       // Create order API call
       const response = await fetch(
-        `/api/proxy?action=add&service=${selectedService.service}&link=${orderLink}&quantity=${orderQuantity}&key=80N1Xb27bTOlDym3xytiXndLkmH0TjpE`,
+        `/api/proxy?action=add&service=${selectedService.service}&link=${orderLink}&quantity=${orderQuantity}&key=ghHzFXqMbTvk8Frq3dii1lnHubpnJwbn`,
         {
           method: "GET", // API uses GET parameters, not POST body
           headers: {
@@ -305,7 +305,7 @@ useEffect(() => {
   
       // Check order status API call
       const statusResponse = await fetch(
-        `/api/proxy?action=status&order=${orderNum}&key=80N1Xb27bTOlDym3xytiXndLkmH0TjpE`,
+        `/api/proxy?action=status&order=${orderNum}&key=ghHzFXqMbTvk8Frq3dii1lnHubpnJwbn`,
         {
           method: "GET",
           headers: {

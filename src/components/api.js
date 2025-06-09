@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'https://app.sizzle.ng/api/v1';
-const API_KEY = '80N1Xb27bTOlDym3xytiXndLkmH0TjpE'; // Your API key
+const API_URL = 'https://boosters.ng/api/v1';
+const API_KEY = 'ghHzFXqMbTvk8Frq3dii1lnHubpnJwbn'; // Your API key
 
 // Base function to make API requests
 const makeRequest = async (params) => {
