@@ -29,6 +29,15 @@ const [showInfoModal, setShowInfoModal] = useState(false);
     }
   });
 
+  // Add state for user balance update
+  const [balanceEmail, setBalanceEmail] = useState('');
+  const [balanceValue, setBalanceValue] = useState('');
+  const [checkedBalance, setCheckedBalance] = useState(null);
+  const [balanceLoading, setBalanceLoading] = useState(false);
+  const [balanceError, setBalanceError] = useState('');
+  const [updateLoading, setUpdateLoading] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState('');
+
   // Update fetchData to match backend response structure
   const fetchData = async () => {
     try {
@@ -99,6 +108,62 @@ const [showInfoModal, setShowInfoModal] = useState(false);
     } catch (error) {
       console.error('Error updating withdrawal:', error);
       alert('Failed to update withdrawal status');
+    }
+  };
+
+  // Handler to check user balance by email
+  const handleCheckBalance = async () => {
+    setBalanceLoading(true);
+    setBalanceError('');
+    setCheckedBalance(null);
+    setUpdateSuccess('');
+    try {
+      const response = await fetch(`${API_URL}/balance`, {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: balanceEmail
+        })
+      });
+      const data = await response.json();
+      if (response.ok && data.balance !== undefined) {
+        setCheckedBalance(data.balance);
+        setBalanceValue(data.balance);
+      } else {
+        setBalanceError(data.message || 'User not found');
+      }
+    } catch (err) {
+      setBalanceError('Failed to fetch balance');
+    } finally {
+      setBalanceLoading(false);
+    }
+  };
+
+  // Handler to update user balance by email
+  const handleUpdateBalance = async () => {
+    setUpdateLoading(true);
+    setUpdateSuccess('');
+    setBalanceError('');
+    try {
+      const response = await fetch(`${API_URL}/balance/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: balanceEmail, amount: balanceValue, type: 'credit' })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setUpdateSuccess('Balance updated successfully');
+        setCheckedBalance(balanceValue);
+        fetchData(); // Refresh user table
+      } else {
+        setBalanceError(data.message || 'Failed to update balance');
+      }
+    } catch (err) {
+      setBalanceError('Failed to update balance');
+    } finally {
+      setUpdateLoading(false);
     }
   };
 
@@ -212,6 +277,59 @@ const [showInfoModal, setShowInfoModal] = useState(false);
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         {activeTab === 'dashboard' && (
           <div className="space-y-6">
+            <div className="bg-white p-6 rounded-lg shadow mb-6">
+              <h3 className="text-lg font-medium mb-4">Update User Balance by Email</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="balance-email" className="text-sm font-medium text-gray-700">User Email</label>
+                  <div className="flex gap-2">
+                    <input
+                      id="balance-email"
+                      type="email"
+                      value={balanceEmail}
+                      onChange={e => setBalanceEmail(e.target.value)}
+                      className="py-2 px-3 border rounded-md w-full focus:ring-pink-500 focus:border-pink-500"
+                      placeholder="Enter user email"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleCheckBalance}
+                      disabled={!balanceEmail || balanceLoading}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
+                    >
+                      {balanceLoading ? 'Checking...' : 'Check Balance'}
+                    </button>
+                  </div>
+                  {checkedBalance !== null && (
+                    <div className="text-green-700 text-sm mt-1">Current Balance: ₦{Number(checkedBalance).toLocaleString()}</div>
+                  )}
+                  {balanceError && <div className="text-red-600 text-sm mt-1">{balanceError}</div>}
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="balance-value" className="text-sm font-medium text-gray-700">Add to Balance</label>
+                  <div className="flex gap-2">
+                    <input
+                      id="balance-value"
+                      type="number"
+                      value={balanceValue}
+                      onChange={e => setBalanceValue(e.target.value)}
+                      className="py-2 px-3 border rounded-md w-full focus:ring-pink-500 focus:border-pink-500"
+                      placeholder="Enter new balance"
+                      disabled={checkedBalance === null}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleUpdateBalance}
+                      disabled={checkedBalance === null || updateLoading}
+                      className="bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700 disabled:opacity-50"
+                    >
+                      {updateLoading ? 'Updating...' : 'Add Balance'}
+                    </button>
+                  </div>
+                  {updateSuccess && <div className="text-green-700 text-sm mt-1">{updateSuccess}</div>}
+                </div>
+              </div>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-white p-6 rounded-lg shadow">
                 <h3 className="text-lg font-medium mb-4">Daily Orders</h3>
@@ -543,25 +661,111 @@ const [showInfoModal, setShowInfoModal] = useState(false);
       </main>
     </div>
   );
-  // Add bank info section to dashboard
+  // Replace SMM API Payment Details section in renderDashboard
   const renderDashboard = () => (
     <div className="space-y-6">
       <div className="bg-white p-6 rounded-lg shadow mb-6">
-        <h3 className="text-lg font-medium mb-4">SMM API Payment Details</h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <p className="text-sm text-gray-500">Bank Name</p>
-            <p className="text-lg font-medium">{bankInfo.bankName}</p>
+        <h3 className="text-lg font-medium mb-4">Update User Balance by Email</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+          <div className="flex flex-col gap-2">
+            <label htmlFor="balance-email" className="text-sm font-medium text-gray-700">User Email</label>
+            <div className="flex gap-2">
+              <input
+                id="balance-email"
+                type="email"
+                value={balanceEmail}
+                onChange={e => setBalanceEmail(e.target.value)}
+                className="py-2 px-3 border rounded-md w-full focus:ring-pink-500 focus:border-pink-500"
+                placeholder="Enter user email"
+              />
+              <button
+                type="button"
+                onClick={handleCheckBalance}
+                disabled={!balanceEmail || balanceLoading}
+                className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:opacity-50"
+              >
+                {balanceLoading ? 'Checking...' : 'Check Balance'}
+              </button>
+            </div>
+            {checkedBalance !== null && (
+              <div className="text-green-700 text-sm mt-1">Current Balance: ₦{Number(checkedBalance).toLocaleString()}</div>
+            )}
+            {balanceError && <div className="text-red-600 text-sm mt-1">{balanceError}</div>}
           </div>
-          <div>
-            <p className="text-sm text-gray-500">Account Number</p>
-            <p className="text-lg font-medium">{bankInfo.accountNumber}</p>
+          <div className="flex flex-col gap-2">
+            <label htmlFor="balance-value" className="text-sm font-medium text-gray-700">Update Balance</label>
+            <div className="flex gap-2">
+              <input
+                id="balance-value"
+                type="number"
+                value={balanceValue}
+                onChange={e => setBalanceValue(e.target.value)}
+                className="py-2 px-3 border rounded-md w-full focus:ring-pink-500 focus:border-pink-500"
+                placeholder="Enter new balance"
+                disabled={checkedBalance === null}
+              />
+              <button
+                type="button"
+                onClick={handleUpdateBalance}
+                disabled={checkedBalance === null || updateLoading}
+                className="bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700 disabled:opacity-50"
+              >
+                {updateLoading ? 'Updating...' : 'Update'}
+              </button>
+            </div>
+            {updateSuccess && <div className="text-green-700 text-sm mt-1">{updateSuccess}</div>}
           </div>
         </div>
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Existing charts */}
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h3 className="text-lg font-medium mb-4">Daily Orders</h3>
+          <ResponsiveContainer width="100%" height={300}>
+          <BarChart width={500} height={300} data={data.metrics.dailyOrders}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="count" fill="#ec4899" />
+          </BarChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="bg-white p-6 rounded-lg shadow">
+          <h3 className="text-lg font-medium mb-4">Monthly Revenue</h3>
+          <ResponsiveContainer width='100%' height={300}>
+          <LineChart width={500} height={300} data={data.metrics.monthlyRevenue}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="month" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="amount" stroke="#ec4899" />
+          </LineChart>
+          </ResponsiveContainer>
+        </div>
+
+        <div className="bg-white p-6 rounded-lg shadow mb-6">
+          <h3 className="text-lg font-medium mb-4">SMM API Payment Details</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm text-gray-500">Bank Name</p>
+              <p className="text-lg font-medium">{bankInfo.bankName}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">Account Number</p>
+              <p className="text-lg font-medium">{bankInfo.accountNumber}</p>
+            </div>
+            <div>
+              <p className='text-sm text-gray-500'>Account Name</p>
+              <p className="text-lg font-medium">{bankInfo.accountName}</p>
+            </div>
+            <div>
+              <p className='text-sm text-gray-500'>Balance</p>
+              <p className='text-lg font-medium'>{smmBal}</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
