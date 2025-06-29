@@ -1,15 +1,11 @@
 import { useAuth } from "../contexts/AuthContext";
 import React, { useState } from "react";
-import { PaystackButton } from "react-paystack";
 import { motion } from "framer-motion";
-import { API_URL } from "../config";
-import { useNavigate } from "react-router-dom";
 
 export default function WalletFunding({ onFund, onClose }) {
   const [amount, setAmount] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate()
-  const [isLoading, setIsLoading] = useState(false);
+  const [showWhatsapp, setShowWhatsapp] = useState(false);
   const { user } = useAuth();
 
   const handleChange = (e) => {
@@ -20,50 +16,10 @@ export default function WalletFunding({ onFund, onClose }) {
     }
   };
 
-  const config = {
-    reference: `wallet_funding_${Date.now()}`,
-    email: user.email,
-    amount: Number(amount) * 100, // Paystack amount is in kobo
-    publicKey: 'pk_live_bd26a2dd4f1554f4d1ac55346b17f139d3dbe903',
-    metadata: {
-      custom_fields: [
-        {
-          display_name: "Customer Name",
-          variable_name: "customer_name",
-          value: user.username
-        }
-      ]
-    }
-  };
-
-  const onSuccess = async (reference) => {
-    try {
-      // Update wallet balance
-      console.log("PAYMENT WAS SUCCESSFUL")
-      navigate(`/payment-callback?transactionRef=${reference}&amount=${parseInt(amount)}`)
-    } catch (error) {
-      console.error('Payment verification failed:', error);
-      setError('Payment successful but failed to update wallet');
-    }
-  };
-
-  const componentProps = {
-    ...config,
-    text: 'Proceed To Payment',
-    onSuccess: (reference) => {
-      console.log("RE: ", reference.reference);
-      onSuccess(reference.reference);
-    },
-    onClose: () => onClose()
-  }
-
-
-
-  // const handlePayment = () => {
-    
-    
-  //   initializePayment(onSuccess(config.reference), onClose);
-  // };
+  // WhatsApp number and template
+  const whatsappNumber = "2347044831729"; // Replace with actual number, e.g. 2348071273078
+  const template = `Hello, I have made a wallet funding payment.\n\nName: ${user?.username || ""}\nEmail: ${user?.email || ""}\nAmount: ₦${amount}\nBank: Moniepoint\nAccount Number: 8071273078\nAccount Name: Raphael Tomiwa`;
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(template)}`;
 
   return (
     <motion.div
@@ -116,34 +72,37 @@ export default function WalletFunding({ onFund, onClose }) {
           </div>
 
           <div className="bg-gray-50 p-4 rounded-md">
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Payment Summary</h3>
-            <div className="flex justify-between text-sm text-gray-600">
-              <span>Amount:</span>
-              <span>₦{Number(amount || 0).toLocaleString()}</span>
+            <h3 className="text-sm font-medium text-gray-700 mb-2">Transfer To</h3>
+            <div className="flex flex-col gap-1 text-gray-700 text-base">
+              <span><b>Bank:</b> Moniepoint</span>
+              <span><b>Account Number:</b> 8071273078</span>
+              <span><b>Account Name:</b> Raphael Tomiwa</span>
             </div>
-            <div className="flex justify-between text-sm text-gray-600 mt-1">
-              <span>Processing Fee:</span>
-              <span>₦0.00</span>
-            </div>
-            <div className="border-t border-gray-200 mt-2 pt-2">
-              <div className="flex justify-between font-medium">
-                <span>Total:</span>
-                <span>₦{Number(amount || 0).toLocaleString()}</span>
-              </div>
-            </div>
+            <div className="mt-2 text-xs text-gray-500">After transfer, click 'I have paid' below and contact us on WhatsApp for faster confirmation (Send Proof Of Payment).</div>
           </div>
 
-          <button
-            disabled={!amount || amount < 100}
-            className={`w-full py-2 px-4 rounded-md text-white font-medium
-              ${amount && amount >= 100
-                ? 'bg-gradient-to-r from-pink-500 to-blue-500 hover:from-pink-600 hover:to-blue-600'
-                : 'bg-gray-300 cursor-not-allowed'
-              } transition-all duration-300`}
-          >
-            {isLoading ? "Processing..." : <PaystackButton {...componentProps} />}
-              
-          </button>
+          {!showWhatsapp ? (
+            <button
+              disabled={!amount || amount < 100}
+              className={`w-full py-2 px-4 rounded-md text-white font-medium mt-2
+                ${amount && amount >= 100
+                  ? 'bg-gradient-to-r from-pink-500 to-blue-500 hover:from-pink-600 hover:to-blue-600'
+                  : 'bg-gray-300 cursor-not-allowed'
+                } transition-all duration-300`}
+              onClick={() => setShowWhatsapp(true)}
+            >
+              I have paid
+            </button>
+          ) : (
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full block py-2 px-4 rounded-md text-white font-medium mt-2 bg-green-500 hover:bg-green-600 text-center transition-all duration-300"
+            >
+              Contact on WhatsApp
+            </a>
+          )}
 
           <p className="text-xs text-gray-500 text-center mt-4">
             By proceeding, you agree to our terms of service and payment processing policies.
