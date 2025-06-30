@@ -74,9 +74,9 @@ export default function WalletFunding({ onFund, onClose }) {
           <div className="bg-gray-50 p-4 rounded-md">
             <h3 className="text-sm font-medium text-gray-700 mb-2">Transfer To</h3>
             <div className="flex flex-col gap-1 text-gray-700 text-base">
-              <span><b>Bank:</b> Moniepoint</span>
-              <span><b>Account Number:</b> 8071273078</span>
-              <span><b>Account Name:</b> Raphael Tomiwa</span>
+              <span><b>Bank:</b> GT Bank</span>
+              <span><b>Account Number:</b> 0603853031</span>
+              <span><b>Account Name:</b> Johny John James</span>
             </div>
             <div className="mt-2 text-xs text-gray-500">After transfer, click 'I have paid' below and contact us on WhatsApp for faster confirmation (Send Proof Of Payment).</div>
           </div>
