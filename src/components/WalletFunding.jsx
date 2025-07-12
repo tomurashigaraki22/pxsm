@@ -16,8 +16,7 @@ export default function WalletFunding({ onFund, onClose }) {
     }
   };
 
-  // WhatsApp number and template
-  const whatsappNumber = "2347044831729"; // Replace with actual number, e.g. 2348071273078
+  const whatsappNumber = "2348164515167"; // Replace with actual number, e.g. 2348071273078
   const template = `Hello, I have made a wallet funding payment.\n\nName: ${user?.username || ""}\nEmail: ${user?.email || ""}\nAmount: ₦${amount}\nBank: Moniepoint\nAccount Number: 8071273078\nAccount Name: Raphael Tomiwa`;
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(template)}`;
 
