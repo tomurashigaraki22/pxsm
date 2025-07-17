@@ -3,7 +3,8 @@
 export default async function handler(req, res) {
     const { method, query } = req;
   
-    const apiKey = "80N1Xb27bTOlDym3xytiXndLkmH0TjpE";
+    // const apiKey = "80N1Xb27bTOlDym3xytiXndLkmH0TjpE";
+    const apiKey = "8216ce80d35d07cb45aeeb44720a0cfc"
   
     if (!apiKey) {
       return res.status(500).json({ error: "API key missing in environment variables" });
@@ -12,7 +13,7 @@ export default async function handler(req, res) {
     const action = query.action;
     const queryParams = new URLSearchParams({ ...query, key: apiKey }).toString();
   
-    const apiUrl = `https://app.sizzle.ng/api/v1?${queryParams}`;
+    const apiUrl = `https://thekclaut.com/api/v2?${queryParams}`;
   
     try {
       const response = await fetch(apiUrl, {
