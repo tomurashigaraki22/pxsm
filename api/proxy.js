@@ -4,7 +4,7 @@ export default async function handler(req, res) {
     const { method, query } = req;
   
     // const apiKey = "80N1Xb27bTOlDym3xytiXndLkmH0TjpE";
-    const apiKey = "8216ce80d35d07cb45aeeb44720a0cfc"
+    const apiKey = "72a70e5ad09fa045a7bfe18bc4c932c1"
   
     if (!apiKey) {
       return res.status(500).json({ error: "API key missing in environment variables" });
