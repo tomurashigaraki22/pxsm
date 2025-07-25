@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { API_URL } from '../config';
+import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -13,6 +14,7 @@ export default function Signup() {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [viewPassword, setviewPassword] = useState(false)
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -140,32 +142,60 @@ export default function Signup() {
                 onChange={handleChange}
               />
             </div>
-            <div>
-              <label htmlFor="password" className="sr-only">Password</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-pink-500 focus:border-pink-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="confirmPassword" className="sr-only">Confirm Password</label>
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-pink-500 focus:border-pink-500 focus:z-10 sm:text-sm"
-                placeholder="Confirm Password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-              />
-            </div>
+            <div className="relative w-full">
+  <label htmlFor="password" className="sr-only">Password</label>
+
+  <input
+    id="password"
+    name="password"
+    type={viewPassword ? "text" : "password"}
+    required
+    className="bg-white text-gray-800 placeholder-gray-400 
+               border border-gray-300 rounded-lg w-full 
+               px-4 py-3 pr-10 text-sm 
+               focus:outline-none focus:ring-2 focus:ring-black focus:border-black 
+               transition-all duration-200"
+    placeholder="Password"
+    value={formData.password}
+    onChange={handleChange}
+  />
+
+  <div className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-500 hover:text-gray-700 transition-colors">
+    {viewPassword ? (
+      <Eye size={20} onClick={() => setviewPassword(!viewPassword)} />
+    ) : (
+      <EyeOff size={20} onClick={() => setviewPassword(!viewPassword)} />
+    )}
+  </div>
+</div>
+
+            <div className="relative w-full">
+  <label htmlFor="confirmPassword" className="sr-only">Confirm Password</label>
+
+  <input
+    id="confirmPassword"
+    name="confirmPassword"
+    type={viewPassword ? "text" : "password"}
+    required
+    className="bg-white text-gray-800 placeholder-gray-400 
+               border border-gray-300 rounded-lg w-full 
+               px-4 py-3 pr-10 text-sm 
+               focus:outline-none focus:ring-2 focus:ring-black focus:border-black 
+               transition-all duration-200"
+    placeholder="Confirm Password"
+    value={formData.confirmPassword}
+    onChange={handleChange}
+  />
+
+  <div className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-500 hover:text-gray-700 transition-colors">
+    {viewPassword ? (
+      <Eye size={20} onClick={() => setviewPassword(!viewPassword)} />
+    ) : (
+      <EyeOff size={20} onClick={() => setviewPassword(!viewPassword)} />
+    )}
+  </div>
+</div>
+
           </div>
 
           <div>

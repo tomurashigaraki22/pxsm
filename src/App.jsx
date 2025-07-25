@@ -13,6 +13,7 @@ import AgentDashboard from './pages/AgentDashboard';
 import AgentSubscription from './pages/AgentSubscription';
 import AdminPanel from './pages/AdminPanel';
 import OrderDetails from './pages/OrderDetails';
+import ForgotPassword from './pages/ForgotPassword';
 
 function App() {
   return (
@@ -33,6 +34,11 @@ function App() {
           <Route path="/signup" element={
             <PublicRoute>
               <Signup />
+            </PublicRoute>
+          } />
+          <Route path="/forgot-password" element={
+            <PublicRoute>
+              <ForgotPassword />
             </PublicRoute>
           } />
           
