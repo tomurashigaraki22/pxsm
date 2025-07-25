@@ -40,12 +40,6 @@ const Navbar = () => {
       alt="SocialBoost Logo"
       className="w-16 h-16 rounded-full object-cover"
     />
-    <motion.h1 
-      className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-blue-500 bg-clip-text text-transparent"
-      whileHover={{ scale: 1.05 }}
-    >
-      SocialBoost
-    </motion.h1>
   </Link>
 </motion.div>
 

@@ -526,9 +526,7 @@ useEffect(() => {
     alt="SocialBoost Logo"
     className="w-16 h-16 rounded-full object-cover"
   />
-  <h1 className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-blue-500 bg-clip-text text-transparent">
-    SocialBoost
-  </h1>
+
 </div>
 
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
