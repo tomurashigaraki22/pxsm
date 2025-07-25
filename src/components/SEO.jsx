@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet-async';
 
 const SEO = ({ title, description, keywords, image }) => {
-  const siteUrl = 'https://pxsm.vercel.app'; // Replace with your actual domain
+  const siteUrl = 'https://socialboost.pxxl.pro'; // Replace with your actual domain
 
   return (
     <Helmet>

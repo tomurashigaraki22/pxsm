@@ -3,4 +3,4 @@ Allow: /
 Disallow: /dashboard
 Disallow: /payment-callback
 
-Sitemap: https://pxsm.vercel.app/sitemap.xml
+Sitemap: https://socialboost.pxxl.pro/sitemap.xml
