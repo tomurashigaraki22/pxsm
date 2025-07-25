@@ -36,7 +36,7 @@ const Navbar = () => {
 >
   <Link to="/" className="flex items-center gap-2">
     <img
-      src={require("../../public/logo.jpg")}  // public folder access
+      src="./logo.jpg"  // public folder access
       alt="SocialBoost Logo"
       className="w-32 h-16 rounded-full object-cover"
     />
