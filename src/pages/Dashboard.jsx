@@ -520,11 +520,11 @@ useEffect(() => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
-            <div className="flex-shrink-0 flex items-center gap-2">
+            <div className="flex-shrink-0 flex items-left gap-2">
   <img
     src="/logo.jpg"
     alt="SocialBoost Logo"
-    className="w-16 h-16 rounded-full object-cover"
+    className="w-32 h-16 rounded-full object-cover"
   />
 
 </div>

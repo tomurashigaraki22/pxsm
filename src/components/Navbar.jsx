@@ -38,7 +38,7 @@ const Navbar = () => {
     <img
       src={require("../../public/logo.jpg")}  // public folder access
       alt="SocialBoost Logo"
-      className="w-16 h-16 rounded-full object-cover"
+      className="w-32 h-16 rounded-full object-cover"
     />
   </Link>
 </motion.div>
