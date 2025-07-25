@@ -29,20 +29,26 @@ const Navbar = () => {
         <div className="flex justify-between items-center">
           {/* Logo */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="flex items-center"
-          >
-            <Link to="/" className="flex items-center">
-              <motion.h1 
-                className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-blue-500 bg-clip-text text-transparent"
-                whileHover={{ scale: 1.05 }}
-              >
-                SocialBoost
-              </motion.h1>
-            </Link>
-          </motion.div>
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  transition={{ delay: 0.2 }}
+  className="flex items-center gap-2"
+>
+  <Link to="/" className="flex items-center gap-2">
+    <img
+      src={require("../../public/logo.jpg")}  // public folder access
+      alt="SocialBoost Logo"
+      className="w-16 h-16 rounded-full object-cover"
+    />
+    <motion.h1 
+      className="text-2xl font-bold bg-gradient-to-r from-pink-500 to-blue-500 bg-clip-text text-transparent"
+      whileHover={{ scale: 1.05 }}
+    >
+      SocialBoost
+    </motion.h1>
+  </Link>
+</motion.div>
+
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">

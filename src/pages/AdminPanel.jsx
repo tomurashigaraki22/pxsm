@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, LineChart, Line, ResponsiveContainer } from 'recharts';
 import { API_URL } from '../config';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function AdminPanel() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedWithdrawal, setSelectedWithdrawal] = useState(null);
   const [smmBal, setSmmBal] = useState(0);
@@ -178,14 +180,21 @@ const [showInfoModal, setShowInfoModal] = useState(false);
             <input type="hidden" name="remember" value="true" />
             <div className="rounded-md shadow-sm -space-y-px">
               <div>
-                <input
-                  type="password"
-                  required
-                  className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-pink-500 focus:border-pink-500 focus:z-10 sm:text-sm"
-                  placeholder="Enter admin password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+                <div className="border border-gray-300 flex flex-row items-center justify-between pr-3 focus-within:ring-pink-500 focus-within:border-pink-500 focus-within:z-10 rounded-md">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    className="appearance-none rounded-md relative block w-full px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-0 focus:border-0 sm:text-sm"
+                    placeholder="Enter admin password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  {showPassword ? (
+                    <EyeOff color='grey' size={25} className="cursor-pointer" onClick={() => setShowPassword(!showPassword)}/>
+                  ) : (
+                    <Eye color='grey' size={25} className="cursor-pointer" onClick={() => setShowPassword(!showPassword)}/>
+                  )}
+                </div>
               </div>
             </div>
             <div>
