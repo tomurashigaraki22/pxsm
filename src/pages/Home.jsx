@@ -209,7 +209,7 @@ function Home() {
                 >
                   <div className="bg-gradient-to-r from-pink-200 to-blue-200 rounded-lg overflow-hidden">
                     <img 
-                      src="/mmmi.jpeg" 
+                      src="/logo.jpg" 
                       alt="Social Media Marketing" 
                       className="w-full h-full object-cover"
                     />
